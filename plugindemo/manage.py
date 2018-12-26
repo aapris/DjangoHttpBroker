@@ -1,6 +1,10 @@
 #!/usr/bin/env python
 import os
 import sys
+# This initialises plugin, but is hard coded.
+# Something like this may be a solution:
+# https://eldarion.com/blog/2013/02/14/entry-point-hook-django-projects/
+from builtinplugin.plugins import BuiltinApp1
 
 if __name__ == '__main__':
     os.environ.setdefault('DJANGO_SETTINGS_MODULE', 'plugindemo.settings')
