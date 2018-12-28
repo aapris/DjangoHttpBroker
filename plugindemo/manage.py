@@ -1,10 +1,7 @@
 #!/usr/bin/env python
 import os
 import sys
-# This initialises plugin, but is hard coded.
-# Something like this may be a solution:
-# https://eldarion.com/blog/2013/02/14/entry-point-hook-django-projects/
-from builtinplugin.plugins import BuiltinApp1
+from businesslogic.setup import import_plugins
 
 if __name__ == '__main__':
     os.environ.setdefault('DJANGO_SETTINGS_MODULE', 'plugindemo.settings')
@@ -16,4 +13,5 @@ if __name__ == '__main__':
             "available on your PYTHONPATH environment variable? Did you "
             "forget to activate a virtual environment?"
         ) from exc
+    import_plugins()
     execute_from_command_line(sys.argv)
