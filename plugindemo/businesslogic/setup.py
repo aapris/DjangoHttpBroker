@@ -19,3 +19,8 @@ def import_plugins():
                 # print(apps[-1])
             except ModuleNotFoundError as err:
                 print(err)
+        from businesslogic.plugin import EndpointProvider
+        actions = EndpointProvider.get_plugins()
+        for a in actions:
+            print(a.title, a.description)
+        print(actions)

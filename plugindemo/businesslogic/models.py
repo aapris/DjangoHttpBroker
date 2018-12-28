@@ -4,7 +4,6 @@ from .plugin import EndpointProvider
 actions = EndpointProvider.get_plugins()
 HANDLER_CHOICES = [(a.title, a.description) for a in actions]
 
-
 class Endpoint(models.Model):
     path = models.CharField(db_index=True, max_length=256)
     handler = models.CharField(max_length=64, choices=HANDLER_CHOICES)
