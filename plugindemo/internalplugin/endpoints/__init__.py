@@ -1,6 +1,4 @@
-# __all__ = ['plugari1', ]
-
-from businesslogic.plugin import EndpointProvider
+from businesslogic.endpoint import EndpointProvider
 from pathlib import Path
 import sys
 import inspect
