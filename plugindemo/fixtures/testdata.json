@@ -4,9 +4,9 @@
  "pk": 1,
  "fields": {
   "path": "savedata.php",
-  "handler": "BuiltinEndpoint1",
+  "handler": "internalplugin.KeyVal",
   "created": "2018-12-26T17:23:11.248Z",
-  "updated": "2018-12-26T21:08:47.569Z"
+  "updated": "2018-12-29T14:25:18.317Z"
  }
 },
 {
@@ -14,9 +14,19 @@
  "pk": 2,
  "fields": {
   "path": "iotendpoint/v2",
-  "handler": "BuiltinEndpoint2",
+  "handler": "internalplugin.ColumnDataEndpoint",
   "created": "2018-12-26T17:23:25.487Z",
-  "updated": "2018-12-26T21:08:37.853Z"
+  "updated": "2018-12-29T14:25:11.308Z"
+ }
+},
+{
+ "model": "businesslogic.endpoint",
+ "pk": 3,
+ "fields": {
+  "path": "foobar",
+  "handler": "thirdparty.SomePlugin",
+  "created": "2018-12-26T21:56:09.752Z",
+  "updated": "2018-12-29T14:25:50.295Z"
  }
 },
 {
@@ -276,7 +286,7 @@
  "pk": 1,
  "fields": {
   "password": "pbkdf2_sha256$120000$AUtX8yxGtdwC$qEnsGAqnt03QswNPRQzTM47OYDVWJa3TCye2LlJCf0Q=",
-  "last_login": "2018-12-26T17:22:55.712Z",
+  "last_login": "2018-12-26T21:45:35.959Z",
   "is_superuser": true,
   "username": "admin",
   "first_name": "",

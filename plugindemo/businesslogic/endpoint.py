@@ -9,7 +9,7 @@ class PluginMount(type):
             # This branch only executes when processing the mount point itself.
             # So, since this is a new plugin type, not an implementation, this
             # class shouldn't be registered as a plugin. Instead, it sets up a
-            # list where plugins can be registered later.
+            # list where endpoints can be registered later.
             cls.plugins = []
         else:
             # This must be a plugin implementation, which should be registered.
@@ -23,14 +23,14 @@ class PluginMount(type):
 
 class EndpointProvider(object, metaclass=PluginMount):
     """
-    Mount point for plugins which refer to actions that can be performed.
+    Mount point for endpoints which refer to actions that can be performed.
 
     Plugins implementing this reference should provide the following attributes:
 
     ===========  ========================================================
     name         Unique name for handler
 
-    app          Namespace for plugins
+    app          Namespace for endpoints
 
     description  Human readable description
     ===========  ========================================================

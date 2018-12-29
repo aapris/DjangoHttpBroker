@@ -35,9 +35,9 @@ INSTALLED_APPS = [
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
-    'businesslogic',
-    'builtinplugin',
-    'thirdparty',
+    'businesslogic',  # Contains URL routing, model for
+    'internalplugin',  # Just some default endpoints for demonstration purposes
+    'thirdparty',  # Some endpoints from a third party provider
 ]
 
 MIDDLEWARE = [

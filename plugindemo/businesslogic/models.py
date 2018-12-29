@@ -1,8 +1,9 @@
 from django.db import models
-from .plugin import EndpointProvider
+from .endpoint import EndpointProvider
 
 actions = EndpointProvider.get_plugins()
-HANDLER_CHOICES = [(a.title, a.description) for a in actions]
+HANDLER_CHOICES = [(f'{a.app}.{a.name}', f'{a.app}.{a.name}') for a in actions]
+
 
 class Endpoint(models.Model):
     path = models.CharField(db_index=True, max_length=256)
