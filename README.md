@@ -9,6 +9,33 @@ In many cases it is not possible to configure a node to use some predefined
 endpoint and the data formats vary a lot, and creating new endpoints should
 be as fast and easy as possible. 
 
+# How to use
+
+Create a Django app using command  
+`python manage.py startapp yourpluginapp`  
+and a directory called `endpoints` inside it.
+Then copy
+[internalplugin/endpoints/\_\_init\_\_.py](plugindemo/internalplugin/endpoints/__init__.py)
+into it. (TODO: make this importable.)
+
+See
+[internalplugin/endpoints/keyval.py](plugindemo/internalplugin/endpoints/keyval.py) 
+of how to implement your own endpoint plugin.
+
+```
+from django.http.response import HttpResponse
+from businesslogic.endpoint import EndpointProvider
+
+class ExampleEndpoint(EndpointProvider):
+    description = "Example endpoint's short description"
+
+    def handle_request(self, request):
+        # Do your stuff here for request data and return HttpResponse
+        ...        
+        return HttpResponse(f'$OK$ {self.name}', content_type='text/plain')
+
+```
+
 ## Key files
 
 Most important files are listed below:
@@ -45,11 +72,11 @@ Registers `EndpointAdmin`.
 Both start-up commands import `import_plugins` from `businesslogic.setup`
 and then initialise plugins: `import_plugins()`
 
-### [builtinplugin/endpoints/\_\_init\_\_.py](plugindemo/internalplugin/endpoints/__init__.py)
+### [internalplugin/endpoints/\_\_init\_\_.py](plugindemo/internalplugin/endpoints/__init__.py)
 All `appname/endpoints/__init__.py` files contain the same code – which loads 
 all plugins in the same directory
 
-### [builtinplugin/endpoints/keyval.py](plugindemo/internalplugin/endpoints/keyval.py)
+### [internalplugin/endpoints/keyval.py](plugindemo/internalplugin/endpoints/keyval.py)
 An example plugin, which handles the request, but doesn't save 
 the data or pass it forward.
 
@@ -72,8 +99,8 @@ python manage.py runserver
 ```
 
 The open URLs 
-http://127.0.0.1:8000/iotendpoint/v2 and  
-http://127.0.0.1:8000/savedata.php  
+http://127.0.0.1:8000/iotendpoint/v2  
+http://127.0.0.1:8000/savedata.php and  
 http://127.0.0.1:8000/savedata.php?dev_id=3AFF42&temp=22.1&humidity=42&pressure=1013.4  
 in your browser or use curl, HTTPie or similar:
 
@@ -90,14 +117,13 @@ User-Agent: HTTPie/1.0.2
 
 
 HTTP/1.1 200 OK
-Content-Length: 4
+Content-Length: 23
 Content-Type: text/plain
-Date: Wed, 26 Dec 2018 21:17:00 GMT
+Date: Sat, 29 Dec 2018 14:51:01 GMT
 Server: WSGIServer/0.2 CPython/3.6.6
 X-Frame-Options: SAMEORIGIN
 
-$OK$
-
+$OK$ ColumnDataEndpoint
 ```
 You can manage endpoints in Django Admin, username and password are `admin` and `admin`.
 http://127.0.0.1:8000/admin/businesslogic/endpoint/
