@@ -14,9 +14,12 @@ be as fast and easy as possible.
 Create a Django app using command  
 `python manage.py startapp yourpluginapp`  
 and a directory called `endpoints` inside it.
-Then copy
-[internalplugin/endpoints/\_\_init\_\_.py](plugindemo/internalplugin/endpoints/__init__.py)
-into it. (TODO: make this importable.)
+Then add these two lines in __init__.py:
+```
+from businesslogic.endpoint import import_endpoints
+import_endpoints(__file__, __name__)
+```
+
 
 See
 [internalplugin/endpoints/keyval.py](plugindemo/internalplugin/endpoints/keyval.py) 

@@ -3,6 +3,13 @@ The root of "Simple Plugin Framework" can be found from here:
 http://martyalchin.com/2008/jan/10/simple-plugin-framework/
 """
 
+import sys
+import inspect
+import pkgutil
+from pathlib import Path
+from importlib import import_module
+
+
 class PluginMount(type):
     def __init__(cls, name, bases, attrs):
         if not hasattr(cls, 'plugins'):
@@ -44,3 +51,17 @@ class EndpointProvider(object, metaclass=PluginMount):
         """
         self.name = type(self).__name__
         self.app = type(self).__module__.split('.')[0]
+
+
+def import_endpoints(_file, _name):
+    """
+    Load all EndpointProvider instances in current module dir
+    :param _file:  always __file__
+    :param _name: always __name__
+    """
+    for (_, name, _) in pkgutil.iter_modules([Path(_file).parent]):
+        imported_module = import_module('.' + name, package=_name)
+        for i in dir(imported_module):
+            attribute = getattr(imported_module, i)
+            if inspect.isclass(attribute) and issubclass(attribute, EndpointProvider):
+                setattr(sys.modules[__name__], name, attribute)
