@@ -282,11 +282,47 @@
  }
 },
 {
+ "model": "auth.permission",
+ "pk": 29,
+ "fields": {
+  "name": "Can add endpoint",
+  "content_type": 8,
+  "codename": "add_endpoint"
+ }
+},
+{
+ "model": "auth.permission",
+ "pk": 30,
+ "fields": {
+  "name": "Can change endpoint",
+  "content_type": 8,
+  "codename": "change_endpoint"
+ }
+},
+{
+ "model": "auth.permission",
+ "pk": 31,
+ "fields": {
+  "name": "Can delete endpoint",
+  "content_type": 8,
+  "codename": "delete_endpoint"
+ }
+},
+{
+ "model": "auth.permission",
+ "pk": 32,
+ "fields": {
+  "name": "Can view endpoint",
+  "content_type": 8,
+  "codename": "view_endpoint"
+ }
+},
+{
  "model": "auth.user",
  "pk": 1,
  "fields": {
   "password": "pbkdf2_sha256$120000$AUtX8yxGtdwC$qEnsGAqnt03QswNPRQzTM47OYDVWJa3TCye2LlJCf0Q=",
-  "last_login": "2018-12-26T21:45:35.959Z",
+  "last_login": "2018-12-30T14:42:26.482Z",
   "is_superuser": true,
   "username": "admin",
   "first_name": "",
@@ -295,6 +331,24 @@
   "is_staff": true,
   "is_active": true,
   "date_joined": "2018-12-26T17:21:51.708Z",
+  "groups": [],
+  "user_permissions": []
+ }
+},
+{
+ "model": "auth.user",
+ "pk": 2,
+ "fields": {
+  "password": "pbkdf2_sha256$120000$4CNXOV14xwvN$HC8SKWYORu7Ju991vGBhOTNiX3qjyUgdcCbHQXLt6o4=",
+  "last_login": null,
+  "is_superuser": false,
+  "username": "dataloggeruser",
+  "first_name": "password: very42hard66pass",
+  "last_name": "",
+  "email": "",
+  "is_staff": false,
+  "is_active": true,
+  "date_joined": "2018-12-30T14:42:34Z",
   "groups": [],
   "user_permissions": []
  }

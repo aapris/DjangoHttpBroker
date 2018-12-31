@@ -14,7 +14,7 @@ be as fast and easy as possible.
 Create a Django app using command  
 `python manage.py startapp yourpluginapp`  
 and a directory called `endpoints` inside it.
-Then add these two lines in __init__.py:
+Then add these two lines in `yourpluginapp/endpoints/__init__.py`:
 ```
 from businesslogic.endpoint import import_endpoints
 import_endpoints(__file__, __name__)
@@ -48,7 +48,8 @@ Most important files are listed below:
 
 ### [businesslogic/urls.py](plugindemo/businesslogic/urls.py)
 `urlpatterns` has one catch-all entry, which handles all requested URLs 
-(except `/admin/`).
+(except `/admin/`):
+`re_path(r'^(?P<path>.*)$', views.catchall),`
 
 ### [businesslogic/views.py](plugindemo/businesslogic/views.py)
 View function `catchall(request, path)` finds the right handler for
@@ -104,7 +105,7 @@ python manage.py runserver
 The open URLs 
 http://127.0.0.1:8000/iotendpoint/v2  
 http://127.0.0.1:8000/savedata.php and  
-http://127.0.0.1:8000/savedata.php?dev_id=3AFF42&temp=22.1&humidity=42&pressure=1013.4  
+http://127.0.0.1:8000/savedata.php?devid=3AFF42&temp=22.1&humidity=42&pressure=1013.4  
 in your browser or use curl, HTTPie or similar:
 
 ```

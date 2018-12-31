@@ -1,8 +1,15 @@
+import base64
+from urllib import parse
 from django.http.response import HttpResponse
 from django.utils import timezone
-
+from django.contrib.auth import authenticate
 from businesslogic.endpoint import EndpointProvider
-from urllib import parse
+from internalplugin.tasks import process_data
+
+import django
+
+django.setup()
+from businesslogic.models import Datalogger
 
 
 class KeyValEndpoint(EndpointProvider):
@@ -18,27 +25,66 @@ class KeyValEndpoint(EndpointProvider):
         return response
 
 
+def basicauth(request):
+    """Check for valid basic auth header."""
+    uname, passwd, user = None, None, None
+    if 'HTTP_AUTHORIZATION' in request.META:
+        auth = request.META['HTTP_AUTHORIZATION'].split()
+        if len(auth) == 2:
+            if auth[0].lower() == "basic":
+                a = auth[1].encode('utf8')
+                s = base64.b64decode(a)
+                uname, passwd = s.decode('utf8').split(':')
+                user = authenticate(username=uname, password=passwd)
+    return uname, passwd, user
+
+
+def get_datalogger(devid, name='', update_activity=False):
+    datalogger, created = Datalogger.objects.get_or_create(devid=devid)
+    changed = False
+    if created:
+        datalogger.name = name
+        changed = True
+    if update_activity:
+        datalogger.activity_at = timezone.now()
+        changed = True
+    if changed:
+        datalogger.save()
+    return datalogger, created
+
+
 def parse_data(request):
     """
     Data is in the query string and looks like this:
-    dev_id=3AFF42&temp=22.1&humidity=42&pressure=1013.4
+    devid=3AFF42&temp=22.1&humidity=42&pressure=1013.4
     """
-    data = dict(parse.parse_qsl(request.META['QUERY_STRING']))
-    dev_id = data.pop('dev_id', '')
+    uname, passwd, user = basicauth(request)
+    if not user:
+        response = HttpResponse('Unauthorized', status=401, content_type='text/plain')
+        return response
+    datadict = dict(parse.parse_qsl(request.META['QUERY_STRING']))
+    devid = datadict.pop('devid', '').strip()
     ts = timezone.now()
     try:
-        values = {key: float(value) for (key, value) in data.items()}
+        values = {key: float(value) for (key, value) in datadict.items()}
     except ValueError as err:
         response = HttpResponse(f'ValueError: {err}', status=400, content_type='text/plain')
         return response
     value_count = len(values.keys())
     response = HttpResponse(f'Unhandled error, sorry', status=500, content_type='text/plain')
-    if dev_id == '':
-        response = HttpResponse(f'ERROR: missing parameter "dev_id"', status=400, content_type='text/plain')
+    if devid == '':
+        response = HttpResponse(f'ERROR: missing parameter "devid"', status=400, content_type='text/plain')
     elif value_count == 0:
         response = HttpResponse(f'ERROR: no data in query string', status=400, content_type='text/plain')
     else:
-        values['time'] = ts
+        datalogger, created = get_datalogger(devid, update_activity=True)
+        if created:
+            print(f'Created {datalogger}')
+        datalist = list(values.items())
+        datalist.sort()
+        datalist.insert(0, ts)
+        data = [datalist]
         # Put data to a queue here (e.g. with task.delay()) for later processing and return response
+        process_data.delay(devid, data)
         response = HttpResponse(f'OK, saved {value_count} data items', content_type='text/plain')
     return response
