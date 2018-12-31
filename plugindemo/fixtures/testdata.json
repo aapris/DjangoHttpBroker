@@ -5,8 +5,8 @@
  "fields": {
   "path": "savedata.php",
   "handler": "internalplugin.KeyVal",
-  "created": "2018-12-26T17:23:11.248Z",
-  "updated": "2018-12-29T14:25:18.317Z"
+  "created_at": "2018-12-26T17:23:11.248Z",
+  "updated_at": "2018-12-29T14:25:18.317Z"
  }
 },
 {
@@ -15,8 +15,8 @@
  "fields": {
   "path": "iotendpoint/v2",
   "handler": "internalplugin.ColumnDataEndpoint",
-  "created": "2018-12-26T17:23:25.487Z",
-  "updated": "2018-12-29T14:25:11.308Z"
+  "created_at": "2018-12-26T17:23:25.487Z",
+  "updated_at": "2018-12-29T14:25:11.308Z"
  }
 },
 {
@@ -25,8 +25,48 @@
  "fields": {
   "path": "foobar",
   "handler": "thirdparty.SomePlugin",
-  "created": "2018-12-26T21:56:09.752Z",
-  "updated": "2018-12-29T14:25:50.295Z"
+  "created_at": "2018-12-26T21:56:09.752Z",
+  "updated_at": "2018-12-29T14:25:50.295Z"
+ }
+},
+{
+ "model": "businesslogic.datalogger",
+ "pk": 1,
+ "fields": {
+  "devid": "3AFF42",
+  "name": "",
+  "activity_at": "2018-12-31T20:03:04.187Z",
+  "created_at": "2018-12-31T17:52:35.131Z",
+  "updated_at": "2018-12-31T20:03:04.187Z"
+ }
+},
+{
+ "model": "businesslogic.forward",
+ "pk": 1,
+ "fields": {
+  "handler": "internalplugin.FileDumpForward",
+  "config": "path=/tmp",
+  "created_at": "2018-12-31T17:50:37.211Z",
+  "updated_at": "2018-12-31T17:50:37.211Z"
+ }
+},
+{
+ "model": "businesslogic.forward",
+ "pk": 2,
+ "fields": {
+  "handler": "internalplugin.FileDumpForward",
+  "config": "path=/Users/arista",
+  "created_at": "2018-12-31T19:11:57.221Z",
+  "updated_at": "2018-12-31T19:11:57.221Z"
+ }
+},
+{
+ "model": "businesslogic.dataloggerforward",
+ "pk": 1,
+ "fields": {
+  "datalogger": 1,
+  "dataforward": 1,
+  "role": "foobar"
  }
 },
 {
@@ -318,11 +358,119 @@
  }
 },
 {
+ "model": "auth.permission",
+ "pk": 33,
+ "fields": {
+  "name": "Can add datalogger forward",
+  "content_type": 9,
+  "codename": "add_dataloggerforward"
+ }
+},
+{
+ "model": "auth.permission",
+ "pk": 34,
+ "fields": {
+  "name": "Can change datalogger forward",
+  "content_type": 9,
+  "codename": "change_dataloggerforward"
+ }
+},
+{
+ "model": "auth.permission",
+ "pk": 35,
+ "fields": {
+  "name": "Can delete datalogger forward",
+  "content_type": 9,
+  "codename": "delete_dataloggerforward"
+ }
+},
+{
+ "model": "auth.permission",
+ "pk": 36,
+ "fields": {
+  "name": "Can view datalogger forward",
+  "content_type": 9,
+  "codename": "view_dataloggerforward"
+ }
+},
+{
+ "model": "auth.permission",
+ "pk": 37,
+ "fields": {
+  "name": "Can add forward",
+  "content_type": 10,
+  "codename": "add_forward"
+ }
+},
+{
+ "model": "auth.permission",
+ "pk": 38,
+ "fields": {
+  "name": "Can change forward",
+  "content_type": 10,
+  "codename": "change_forward"
+ }
+},
+{
+ "model": "auth.permission",
+ "pk": 39,
+ "fields": {
+  "name": "Can delete forward",
+  "content_type": 10,
+  "codename": "delete_forward"
+ }
+},
+{
+ "model": "auth.permission",
+ "pk": 40,
+ "fields": {
+  "name": "Can view forward",
+  "content_type": 10,
+  "codename": "view_forward"
+ }
+},
+{
+ "model": "auth.permission",
+ "pk": 41,
+ "fields": {
+  "name": "Can add datalogger",
+  "content_type": 7,
+  "codename": "add_datalogger"
+ }
+},
+{
+ "model": "auth.permission",
+ "pk": 42,
+ "fields": {
+  "name": "Can change datalogger",
+  "content_type": 7,
+  "codename": "change_datalogger"
+ }
+},
+{
+ "model": "auth.permission",
+ "pk": 43,
+ "fields": {
+  "name": "Can delete datalogger",
+  "content_type": 7,
+  "codename": "delete_datalogger"
+ }
+},
+{
+ "model": "auth.permission",
+ "pk": 44,
+ "fields": {
+  "name": "Can view datalogger",
+  "content_type": 7,
+  "codename": "view_datalogger"
+ }
+},
+{
  "model": "auth.user",
  "pk": 1,
  "fields": {
   "password": "pbkdf2_sha256$120000$AUtX8yxGtdwC$qEnsGAqnt03QswNPRQzTM47OYDVWJa3TCye2LlJCf0Q=",
-  "last_login": "2018-12-30T14:42:26.482Z",
+  "last_login": "2018-12-31T18:00:04.368Z",
   "is_superuser": true,
   "username": "admin",
   "first_name": "",

@@ -1,15 +1,9 @@
-import base64
 from urllib import parse
 from django.http.response import HttpResponse
 from django.utils import timezone
-from django.contrib.auth import authenticate
 from businesslogic.endpoint import EndpointProvider
 from internalplugin.tasks import process_data
-
-import django
-
-django.setup()
-from businesslogic.models import Datalogger
+from internalplugin.utils import get_datalogger, basicauth
 
 
 class KeyValEndpoint(EndpointProvider):
@@ -23,34 +17,6 @@ class KeyValEndpoint(EndpointProvider):
         # Handle request here and pass data forward and return response as quickly as possible
         response = parse_data(request)
         return response
-
-
-def basicauth(request):
-    """Check for valid basic auth header."""
-    uname, passwd, user = None, None, None
-    if 'HTTP_AUTHORIZATION' in request.META:
-        auth = request.META['HTTP_AUTHORIZATION'].split()
-        if len(auth) == 2:
-            if auth[0].lower() == "basic":
-                a = auth[1].encode('utf8')
-                s = base64.b64decode(a)
-                uname, passwd = s.decode('utf8').split(':')
-                user = authenticate(username=uname, password=passwd)
-    return uname, passwd, user
-
-
-def get_datalogger(devid, name='', update_activity=False):
-    datalogger, created = Datalogger.objects.get_or_create(devid=devid)
-    changed = False
-    if created:
-        datalogger.name = name
-        changed = True
-    if update_activity:
-        datalogger.activity_at = timezone.now()
-        changed = True
-    if changed:
-        datalogger.save()
-    return datalogger, created
 
 
 def parse_data(request):
@@ -71,7 +37,7 @@ def parse_data(request):
         response = HttpResponse(f'ValueError: {err}', status=400, content_type='text/plain')
         return response
     value_count = len(values.keys())
-    response = HttpResponse(f'Unhandled error, sorry', status=500, content_type='text/plain')
+    # response = HttpResponse(f'Unhandled error, sorry', status=500, content_type='text/plain')
     if devid == '':
         response = HttpResponse(f'ERROR: missing parameter "devid"', status=400, content_type='text/plain')
     elif value_count == 0:

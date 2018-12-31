@@ -105,7 +105,7 @@ python manage.py runserver
 The open URLs 
 http://127.0.0.1:8000/iotendpoint/v2  
 http://127.0.0.1:8000/savedata.php and  
-http://127.0.0.1:8000/savedata.php?devid=3AFF42&temp=22.1&humidity=42&pressure=1013.4  
+http "http://dataloggeruser:very42hard66pass@127.0.0.1:8000/savedata.php?devid=3AFF42&temp=22.1&humidity=42&pressure=1013.4&foo=42"  
 in your browser or use curl, HTTPie or similar:
 
 ```
@@ -131,3 +131,14 @@ $OK$ ColumnDataEndpoint
 ```
 You can manage endpoints in Django Admin, username and password are `admin` and `admin`.
 http://127.0.0.1:8000/admin/businesslogic/endpoint/
+
+# Celery
+
+[keyval.py](plugindemo/internalplugin/endpoints/keyval.py) endpoint uses
+Celery task (defined in
+[internalplugin/tasks.py](plugindemo/internalplugin/tasks.py))
+to process the request data later. You need RabbitMQ or some other broker 
+to deliver jobs from Django view to Celery.
+
+Run celery in the same directory where `manage.py` lives like this:  
+`celery --app=plugindemo worker`

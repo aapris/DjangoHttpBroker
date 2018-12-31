@@ -1,6 +1,7 @@
 from django.conf import settings
 from django.utils.module_loading import import_module
 from businesslogic.endpoint import EndpointProvider
+from businesslogic.endpoint import ForwardProvider
 
 
 def import_plugins():
@@ -15,10 +16,19 @@ def import_plugins():
             print(f'{appname}: ', end='')
             try:
                 apps.append(import_module(appname + '.endpoints'))
-                print(' endpoints found!')
+                print('endpoints found!')
+            except ModuleNotFoundError as err:
+                print(err)
+            try:
+                apps.append(import_module(appname + '.forwards'))
+                print('forwards found!')
             except ModuleNotFoundError as err:
                 print(err)
 
-        actions = EndpointProvider.get_plugins()
-        for a in actions:
-            print(f'{a.name}: {a.description}')
+        endpoints = EndpointProvider.get_plugins()
+        for e in endpoints:
+            print(f'{e.name}: {e.description}')
+
+        forwards = ForwardProvider.get_plugins()
+        for f in forwards:
+            print(f'{f.name}: {f.description}')
