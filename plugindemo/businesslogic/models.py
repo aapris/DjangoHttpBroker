@@ -1,5 +1,7 @@
 from django.db import models
 from .endpoint import EndpointProvider, ForwardProvider
+import json
+from django.core.exceptions import ValidationError
 
 endpoints = EndpointProvider.get_plugins()
 ENDPOINT_HANDLER_CHOICES = [(f'{a.app}.{a.name}', f'{a.app}.{a.name}') for a in endpoints]
@@ -43,11 +45,25 @@ class Forward(models.Model):
     def __str__(self):
         return '{}'.format(self.handler)
 
+    def clean(self, exclude=None):
+        try:
+            config = json.loads(self.config)
+        except json.JSONDecodeError as err:
+            raise ValidationError(f'JSON error in config: {err}')
+        self.config = json.dumps(config, indent=1)
+
 
 class DataloggerForward(models.Model):
     datalogger = models.ForeignKey(Datalogger, on_delete=models.CASCADE)
     dataforward = models.ForeignKey(Forward, on_delete=models.CASCADE)
-    role = models.CharField(max_length=100)
+    config = models.TextField(default='', help_text='All required configuration parameters in JSON format')
 
     def __str__(self):
         return f'{self.datalogger} -> {self.dataforward}'
+
+    def clean(self, exclude=None):
+        try:
+            config = json.loads(self.config)
+        except json.JSONDecodeError as err:
+            raise ValidationError(f'JSON error in config: {err}')
+        self.config = json.dumps(config, indent=1)
