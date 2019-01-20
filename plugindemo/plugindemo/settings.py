@@ -115,3 +115,13 @@ USE_TZ = True
 # https://docs.djangoproject.com/en/2.1/howto/static-files/
 
 STATIC_URL = '/static/'
+
+# local_settings.py can be used to override environment-specific settings
+# like database and email that differ between development and production.
+try:
+    from local_settings import *
+except:
+    print("Failed to import local_settings.")
+    print(f"cp {BASE_DIR}/local_settings-example.py {BASE_DIR}/local_settings.py")
+    print("and modify as needed.")
+    exit(1)
