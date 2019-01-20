@@ -2,7 +2,9 @@ from django.db import models
 from .endpoint import EndpointProvider, ForwardProvider
 import json
 from django.core.exceptions import ValidationError
+from businesslogic.setup import import_plugins
 
+import_plugins()
 endpoints = EndpointProvider.get_plugins()
 ENDPOINT_HANDLER_CHOICES = [(f'{a.app}.{a.name}', f'{a.app}.{a.name}') for a in endpoints]
 forwards = ForwardProvider.get_plugins()
