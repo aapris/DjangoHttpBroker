@@ -22,7 +22,7 @@ import_endpoints(__file__, __name__)
 
 
 See
-[internalplugin/endpoints/keyval.py](plugindemo/internalplugin/endpoints/keyval.py) 
+[internalplugin/endpoints/keyval.py](httpbroker/demoplugin/endpoints/keyval.py) 
 of how to implement your own endpoint plugin.
 
 ```
@@ -43,44 +43,44 @@ class ExampleEndpoint(EndpointProvider):
 
 Most important files are listed below:
 
-### [plugindemo/settings.py](plugindemo/plugindemo/settings.py)
+### [plugindemo/settings.py](httpbroker/httpbroker/settings.py)
 `INSTALLED_APPS` contains zero or more apps which provide additional plugins.
 
-### [businesslogic/urls.py](plugindemo/businesslogic/urls.py)
+### [businesslogic/urls.py](httpbroker/broker/urls.py)
 `urlpatterns` has one catch-all entry, which handles all requested URLs 
 (except `/admin/`):
 `re_path(r'^(?P<path>.*)$', views.catchall),`
 
-### [businesslogic/views.py](plugindemo/businesslogic/views.py)
+### [businesslogic/views.py](httpbroker/broker/views.py)
 View function `catchall(request, path)` finds the right handler for
 requested URL or returns `HTTP 404 Not Found`, 
 if requested URL is not defined.  
 
-### [businesslogic/models.py](plugindemo/businesslogic/models.py)
+### [businesslogic/models.py](httpbroker/broker/models.py)
 `Endpoint` model stores paths (URLs) and their handlers. 
 `HANDLER_CHOICES` is populated once, when Django process is started.
 
-### [businesslogic/plugin.py](plugindemo/businesslogic/endpoint.py)
+### [businesslogic/plugin.py](httpbroker/broker/endpoint.py)
 `PluginMount` and  `EndpointProvider` classes are introduced here.
 Every valid plugin must extend `EndpointProvider` and implement 
 `handle_request(request)` function which returns `HttpResponse`.
 
-### [businesslogic/setup.py](plugindemo/businesslogic/setup.py)
+### [businesslogic/setup.py](httpbroker/broker/setup.py)
 `import_plugins()` is defined here and it loads all 
 plugins which are found from `plugindemo/appname/endpoints/` directories.
 
-### [businesslogic/admin.py](plugindemo/businesslogic/admin.py)
+### [businesslogic/admin.py](httpbroker/broker/admin.py)
 Registers `EndpointAdmin`.
 
-### [plugindemo/wsgi.py](plugindemo/plugindemo/wsgi.py) and [manage.py](plugindemo/manage.py) 
+### [plugindemo/wsgi.py](httpbroker/httpbroker/wsgi.py) and [manage.py](httpbroker/manage.py) 
 Both start-up commands import `import_plugins` from `businesslogic.setup`
 and then initialise plugins: `import_plugins()`
 
-### [internalplugin/endpoints/\_\_init\_\_.py](plugindemo/internalplugin/endpoints/__init__.py)
+### [internalplugin/endpoints/\_\_init\_\_.py](httpbroker/demoplugin/endpoints/__init__.py)
 All `appname/endpoints/__init__.py` files contain the same code – which loads 
 all plugins in the same directory
 
-### [internalplugin/endpoints/keyval.py](plugindemo/internalplugin/endpoints/keyval.py)
+### [internalplugin/endpoints/keyval.py](httpbroker/demoplugin/endpoints/keyval.py)
 An example plugin, which handles the request, but doesn't save 
 the data or pass it forward.
 
@@ -134,9 +134,9 @@ http://127.0.0.1:8000/admin/businesslogic/endpoint/
 
 # Celery
 
-[keyval.py](plugindemo/internalplugin/endpoints/keyval.py) endpoint uses
+[keyval.py](httpbroker/demoplugin/endpoints/keyval.py) endpoint uses
 Celery task (defined in
-[internalplugin/tasks.py](plugindemo/internalplugin/tasks.py))
+[internalplugin/tasks.py](httpbroker/demoplugin/tasks.py))
 to process the request data later. You need RabbitMQ or some other broker 
 to deliver jobs from Django view to Celery.
 
