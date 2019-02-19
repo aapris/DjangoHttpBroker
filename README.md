@@ -16,18 +16,18 @@ Create a Django app using command
 and a directory called `endpoints` inside it.
 Then add these two lines in `yourpluginapp/endpoints/__init__.py`:
 ```
-from businesslogic.endpoint import import_endpoints
+from broker.endpoint import import_endpoints
 import_endpoints(__file__, __name__)
 ```
 
 
 See
-[internalplugin/endpoints/keyval.py](httpbroker/demoplugin/endpoints/keyval.py) 
+[demoplugin/endpoints/keyval.py](httpbroker/demoplugin/endpoints/keyval.py) 
 of how to implement your own endpoint plugin.
 
 ```
 from django.http.response import HttpResponse
-from businesslogic.endpoint import EndpointProvider
+from broker.endpoint import EndpointProvider
 
 class ExampleEndpoint(EndpointProvider):
     description = "Example endpoint's short description"
@@ -43,44 +43,44 @@ class ExampleEndpoint(EndpointProvider):
 
 Most important files are listed below:
 
-### [plugindemo/settings.py](httpbroker/httpbroker/settings.py)
+### [httpbroker/settings.py](httpbroker/httpbroker/settings.py)
 `INSTALLED_APPS` contains zero or more apps which provide additional plugins.
 
-### [businesslogic/urls.py](httpbroker/broker/urls.py)
+### [broker/urls.py](httpbroker/broker/urls.py)
 `urlpatterns` has one catch-all entry, which handles all requested URLs 
 (except `/admin/`):
 `re_path(r'^(?P<path>.*)$', views.catchall),`
 
-### [businesslogic/views.py](httpbroker/broker/views.py)
+### [broker/views.py](httpbroker/broker/views.py)
 View function `catchall(request, path)` finds the right handler for
 requested URL or returns `HTTP 404 Not Found`, 
 if requested URL is not defined.  
 
-### [businesslogic/models.py](httpbroker/broker/models.py)
+### [broker/models.py](httpbroker/broker/models.py)
 `Endpoint` model stores paths (URLs) and their handlers. 
 `HANDLER_CHOICES` is populated once, when Django process is started.
 
-### [businesslogic/plugin.py](httpbroker/broker/endpoint.py)
+### [broker/plugin.py](httpbroker/broker/endpoint.py)
 `PluginMount` and  `EndpointProvider` classes are introduced here.
 Every valid plugin must extend `EndpointProvider` and implement 
 `handle_request(request)` function which returns `HttpResponse`.
 
-### [businesslogic/setup.py](httpbroker/broker/setup.py)
+### [broker/setup.py](httpbroker/broker/setup.py)
 `import_plugins()` is defined here and it loads all 
-plugins which are found from `plugindemo/appname/endpoints/` directories.
+plugins which are found from `httpbroker/appname/endpoints/` directories.
 
-### [businesslogic/admin.py](httpbroker/broker/admin.py)
+### [broker/admin.py](httpbroker/broker/admin.py)
 Registers `EndpointAdmin`.
 
-### [plugindemo/wsgi.py](httpbroker/httpbroker/wsgi.py) and [manage.py](httpbroker/manage.py) 
-Both start-up commands import `import_plugins` from `businesslogic.setup`
+### [httpbroker/wsgi.py](httpbroker/httpbroker/wsgi.py) and [manage.py](httpbroker/manage.py) 
+Both start-up commands import `import_plugins` from `broker.setup`
 and then initialise plugins: `import_plugins()`
 
-### [internalplugin/endpoints/\_\_init\_\_.py](httpbroker/demoplugin/endpoints/__init__.py)
+### [demoplugin/endpoints/\_\_init\_\_.py](httpbroker/demoplugin/endpoints/__init__.py)
 All `appname/endpoints/__init__.py` files contain the same code – which loads 
 all plugins in the same directory
 
-### [internalplugin/endpoints/keyval.py](httpbroker/demoplugin/endpoints/keyval.py)
+### [demoplugin/endpoints/keyval.py](httpbroker/demoplugin/endpoints/keyval.py)
 An example plugin, which handles the request, but doesn't save 
 the data or pass it forward.
 
@@ -96,7 +96,7 @@ cd DjangoPluginDemo/
 virtualenv -p /usr/local/bin/python3.6 venv  # Check your python3 path!
 source venv/bin/activate
 pip install -r requirements.txt 
-cd plugindemo/
+cd httpbroker/
 python manage.py migrate
 python manage.py loaddata fixtures/testdata.json 
 python manage.py runserver
@@ -130,15 +130,15 @@ X-Frame-Options: SAMEORIGIN
 $OK$ ColumnDataEndpoint
 ```
 You can manage endpoints in Django Admin, username and password are `admin` and `admin`.
-http://127.0.0.1:8000/admin/businesslogic/endpoint/
+http://127.0.0.1:8000/admin/broker/endpoint/
 
 # Celery
 
 [keyval.py](httpbroker/demoplugin/endpoints/keyval.py) endpoint uses
 Celery task (defined in
-[internalplugin/tasks.py](httpbroker/demoplugin/tasks.py))
+[demoplugin/tasks.py](httpbroker/demoplugin/tasks.py))
 to process the request data later. You need RabbitMQ or some other broker 
 to deliver jobs from Django view to Celery.
 
 Run celery in the same directory where `manage.py` lives like this:  
-`celery --app=plugindemo worker`
+`celery --app=httpbroker worker`
