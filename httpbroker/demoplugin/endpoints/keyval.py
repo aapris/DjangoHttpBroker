@@ -2,8 +2,8 @@ from urllib import parse
 from django.http.response import HttpResponse
 from django.utils import timezone
 from broker.endpoint import EndpointProvider
-from internalplugin.tasks import process_data
-from internalplugin.utils import get_datalogger, basicauth
+from demoplugin.tasks import process_data
+from demoplugin.utils import get_datalogger, basicauth
 
 
 class KeyValEndpoint(EndpointProvider):
