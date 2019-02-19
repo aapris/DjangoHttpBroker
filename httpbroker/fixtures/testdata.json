@@ -1,32 +1,12 @@
 [
 {
  "model": "broker.endpoint",
- "pk": 1,
- "fields": {
-  "path": "savedata.php",
-  "handler": "internalplugin.KeyVal",
-  "created_at": "2018-12-26T17:23:11.248Z",
-  "updated_at": "2018-12-29T14:25:18.317Z"
- }
-},
-{
- "model": "broker.endpoint",
  "pk": 2,
  "fields": {
   "path": "iotendpoint/v2",
-  "handler": "internalplugin.ColumnDataEndpoint",
+  "handler": "demoplugin.ColumnDataEndpoint",
   "created_at": "2018-12-26T17:23:25.487Z",
   "updated_at": "2018-12-29T14:25:11.308Z"
- }
-},
-{
- "model": "broker.endpoint",
- "pk": 3,
- "fields": {
-  "path": "foobar",
-  "handler": "thirdparty.SomePlugin",
-  "created_at": "2018-12-26T21:56:09.752Z",
-  "updated_at": "2018-12-29T14:25:50.295Z"
  }
 },
 {
@@ -34,9 +14,19 @@
  "pk": 4,
  "fields": {
   "path": "dummy",
-  "handler": "internalplugin.DummyEndpoint",
+  "handler": "demoplugin.DummyEndpoint",
   "created_at": "2019-01-07T08:39:06.436Z",
   "updated_at": "2019-01-07T08:39:06.436Z"
+ }
+},
+{
+ "model": "broker.endpoint",
+ "pk": 5,
+ "fields": {
+  "path": "dump",
+  "handler": "demoplugin.DumpRequestEndpoint",
+  "created_at": "2019-02-19T11:07:36.732Z",
+  "updated_at": "2019-02-19T11:07:36.732Z"
  }
 },
 {
@@ -54,7 +44,7 @@
  "model": "broker.forward",
  "pk": 1,
  "fields": {
-  "handler": "internalplugin.FileDumpForward",
+  "handler": "demoplugin.FileDumpForward",
   "config": "{\n \"path\": \"/tmp\"\n}",
   "created_at": "2018-12-31T17:50:37.211Z",
   "updated_at": "2019-01-07T12:12:49.736Z"
@@ -64,10 +54,10 @@
  "model": "broker.forward",
  "pk": 3,
  "fields": {
-  "handler": "thirdparty.DummyHttpForward",
+  "handler": "demoplugin.DummyHttpForward",
   "config": "{\n \"url\": \"http://127.0.0.1:8000/dummy\"\n}",
   "created_at": "2019-01-07T08:34:04.577Z",
-  "updated_at": "2019-01-07T12:12:55.129Z"
+  "updated_at": "2019-02-19T12:44:13.495Z"
  }
 },
 {
@@ -560,8 +550,8 @@
  "model": "auth.user",
  "pk": 1,
  "fields": {
-  "password": "pbkdf2_sha256$120000$AUtX8yxGtdwC$qEnsGAqnt03QswNPRQzTM47OYDVWJa3TCye2LlJCf0Q=",
-  "last_login": "2018-12-31T18:00:04.368Z",
+  "password": "pbkdf2_sha256$150000$ejvP5uUdKd21$PpmXN+fa/xuuomp3a+m9XEHhrerYnt2+h4rEebUM7wY=",
+  "last_login": "2019-02-19T11:06:59.181Z",
   "is_superuser": true,
   "username": "admin",
   "first_name": "",
