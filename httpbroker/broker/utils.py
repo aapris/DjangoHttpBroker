@@ -7,9 +7,13 @@ serializable.
 """
 
 import msgpack
+import pika
+import pika.exceptions
 
 META_STARTSWITH = ('SERVER', 'REMOTE')  # REMOTE_ADDR etc.
 META_EXACT = ('QUERY_STRING', 'REQUEST_METHOD', 'SCRIPT_NAME', 'PATH_INFO')
+
+RAW_HTTP_EXCHANGE = 'incoming_raw_http'
 
 
 def serialize_django_request(request):
@@ -51,3 +55,22 @@ def data_unpack(message):
     :return: Message in dict
     """
     return msgpack.unpackb(message, use_list=True, raw=False, strict_map_key=True)
+
+
+def send_message(message, key):
+    conn_params = pika.ConnectionParameters('localhost', 5672, '/',
+                                            #  pika.credentials.PlainCredentials('user', 'password')
+                                            )
+    try:
+        connection = pika.BlockingConnection(conn_params)
+    except pika.exceptions.ConnectionClosed as err:
+        # Log error, notify admins, fallback to file storage etc. here
+        raise
+    channel = connection.channel()
+    channel.basic_publish(exchange=RAW_HTTP_EXCHANGE,
+                          routing_key=key,
+                          body=message,
+                          properties=pika.BasicProperties(content_type='application/octet-stream',
+                                                          delivery_mode=2))
+    channel.close()
+    connection.close()
