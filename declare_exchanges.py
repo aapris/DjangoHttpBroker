@@ -1,5 +1,7 @@
 import pika
 
+RAW_HTTP_EXCHANGE = 'incoming_raw_http'
+
 connection = pika.BlockingConnection(
     pika.ConnectionParameters('localhost', 5672, '/',
                               # pika.credentials.PlainCredentials('user', 'password')
@@ -7,7 +9,7 @@ connection = pika.BlockingConnection(
 
 channel = connection.channel()
 channel.exchange_declare(
-    exchange='incoming_raw_http',
+    exchange=RAW_HTTP_EXCHANGE,
     exchange_type='topic',
     durable=True,
     auto_delete=False,
