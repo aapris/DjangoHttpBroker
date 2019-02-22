@@ -21,6 +21,7 @@ def consumer_callback(channel, method, properties, body):
         os.makedirs(path)
     with open(fpath, 'ab') as f:
         f.write(body)
+    channel.basic_ack(method.delivery_tag)
 
 
 class Command(BaseCommand):
