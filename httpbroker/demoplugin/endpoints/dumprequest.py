@@ -1,12 +1,7 @@
 import json
-import msgpack
-from io import BytesIO
 from django.http.response import HttpResponse
 from broker.endpoint import EndpointProvider
 from broker.utils import serialize_django_request, data_pack, data_unpack
-
-META_STARTSWITH = ('SERVER', 'REMOTE')
-META_EXACT = ('QUERY_STRING', 'REQUEST_METHOD', 'SCRIPT_NAME', 'PATH_INFO')
 
 
 class DumpRequestEndpoint(EndpointProvider):
