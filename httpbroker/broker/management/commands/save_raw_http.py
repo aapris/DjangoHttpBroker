@@ -39,7 +39,7 @@ class Command(BaseCommand):
             connection = pika.BlockingConnection(conn_params)
         except pika.exceptions.ConnectionClosed as err:
             print(f'Connection failed {err}')
-            exit(1)
+            raise
 
         queue_name = 'raw_http_save_queue'
         channel = connection.channel()
