@@ -29,11 +29,12 @@ def serialize_django_request(request):
         if k.startswith(META_STARTSWITH) or k in META_EXACT:
             request_meta[k] = request.META[k]
     request_meta['path'] = request.META['SCRIPT_NAME'] + request.META['PATH_INFO']
-
     return {
         'request.headers': dict(request.headers),
         'request.META': request_meta,
         'request.body': request.body,
+        'request.GET': dict(request.GET),
+        'request.POST': dict(request.POST),
     }
 
 
