@@ -14,11 +14,19 @@ FORWARD_HANDLER_CHOICES = [(f'{a.app}.{a.name}', f'{a.app}.{a.name}') for a in f
 class Endpoint(models.Model):
     path = models.CharField(db_index=True, max_length=256)
     handler = models.CharField(max_length=64, choices=ENDPOINT_HANDLER_CHOICES)
+    config = models.TextField(default='', help_text='All required configuration parameters in JSON format')
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)
 
     def __str__(self):
         return '{}'.format(self.path)
+
+    def clean(self, exclude=None):
+        try:
+            config = json.loads(self.config)
+        except json.JSONDecodeError as err:
+            raise ValidationError(f'JSON error in config: {err}')
+        self.config = json.dumps(config, indent=1)
 
 
 class Datalogger(models.Model):
@@ -40,7 +48,7 @@ class Datalogger(models.Model):
 class Forward(models.Model):
     # datalogger = models.ForeignKey(Datalogger, on_delete=models.CASCADE)
     handler = models.CharField(max_length=64, choices=FORWARD_HANDLER_CHOICES)
-    config = models.TextField(default='')
+    config = models.TextField(default='', help_text='All required configuration parameters in JSON format')
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)
 
