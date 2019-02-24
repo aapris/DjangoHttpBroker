@@ -12,7 +12,7 @@ ENDPOINT_HANDLER_CHOICES = [(f'{a.app}.{a.name}', f'{a.app}.{a.name}') for a in 
 forwards = ForwardProvider.get_plugins()
 FORWARD_HANDLER_CHOICES = [(f'{a.app}.{a.name}', f'{a.app}.{a.name}') for a in forwards]
 decoders = DecoderProvider.get_plugins()
-DECODER_HANDLER_CHOICES = [(f'{a.app}.{a.name}', f'{a.app}.{a.name}') for a in forwards]
+DECODER_HANDLER_CHOICES = [(f'{a.app}.{a.name}', f'{a.app}.{a.name}') for a in decoders]
 
 
 class Endpoint(models.Model):
