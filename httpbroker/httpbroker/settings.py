@@ -122,6 +122,16 @@ CELERY_BROKER_URL = 'amqp://localhost'  # RabbitMQ on localhost
 CELERY_ACCEPT_CONTENT = ['msgpack']
 CELERY_TASK_SERIALIZER = 'msgpack'  # Packs bytes (json won't)
 
+# RabbitMQ
+RABBITMQ = {
+    'ROUTING_KEY_PREFIX': 'httpbroker',  # Override in local_settings
+    'HOST': 'localhost',
+    'VHOST': '/',
+    'PORT': 5672,
+    'USER': None,
+    'PASSWORD': None,
+}
+
 # local_settings.py can be used to override environment-specific settings
 # like database and email that differ between development and production.
 try:
