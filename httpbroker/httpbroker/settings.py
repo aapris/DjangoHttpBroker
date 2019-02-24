@@ -38,7 +38,6 @@ INSTALLED_APPS = [
     'django.contrib.staticfiles',
     'broker',  # Contains URL routing, model for
     'demoplugin',  # Just some default endpoints for demonstration purposes
-    'thirdparty',  # Some endpoints from a third party provider
 ]
 
 MIDDLEWARE = [
