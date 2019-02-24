@@ -1,7 +1,5 @@
 from django.conf import settings
 from django.utils.module_loading import import_module
-from broker.endpoint import EndpointProvider
-from broker.endpoint import ForwardProvider
 
 
 def import_plugins():
@@ -16,13 +14,19 @@ def import_plugins():
             # print(f'{appname}: ', end='')
             try:
                 apps.append(import_module(appname + '.endpoints'))
-                # print('endpoints found!')
+                # print(f'{appname} endpoints found!')
             except ModuleNotFoundError as err:
                 pass
                 # print(err)
             try:
                 apps.append(import_module(appname + '.forwards'))
-                # print('forwards found!')
+                # print(f'{appname} forwards found!')
+            except ModuleNotFoundError as err:
+                pass
+                # print(err)
+            try:
+                apps.append(import_module(appname + '.decoders'))
+                # print(f'{appname} decoders found!')
             except ModuleNotFoundError as err:
                 pass
                 # print(err)

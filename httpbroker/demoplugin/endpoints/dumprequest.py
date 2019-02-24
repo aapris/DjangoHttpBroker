@@ -1,6 +1,6 @@
 import json
 from django.http.response import HttpResponse
-from broker.endpoint import EndpointProvider
+from broker.providers.endpoint import EndpointProvider
 from broker.utils import serialize_django_request, data_pack, data_unpack
 
 

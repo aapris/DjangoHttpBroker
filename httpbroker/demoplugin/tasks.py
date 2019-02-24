@@ -1,6 +1,6 @@
 from celery import shared_task
 from .utils import get_datalogger
-from broker.endpoint import ForwardProvider
+from broker.providers.forward import ForwardProvider
 
 
 @shared_task

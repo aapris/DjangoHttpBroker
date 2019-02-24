@@ -1,5 +1,5 @@
 from django.http.response import HttpResponse
-from broker.endpoint import EndpointProvider
+from broker.providers.endpoint import EndpointProvider
 
 
 class DummyEndpoint(EndpointProvider):

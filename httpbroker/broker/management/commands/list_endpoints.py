@@ -1,7 +1,9 @@
 import json
 from django.core.management.base import BaseCommand, CommandError
-from broker.models import Endpoint, Forward
-from broker.endpoint import EndpointProvider, ForwardProvider
+from broker.models import Endpoint, Forward, Decoder
+from broker.providers.endpoint import EndpointProvider
+from broker.providers.forward import ForwardProvider
+from broker.providers.decoder import DecoderProvider
 
 
 class Command(BaseCommand):
@@ -29,5 +31,15 @@ class Command(BaseCommand):
             print(f'{name: <40}{a.description}')
         print('\nConfigured Forwards\n=========================')
         for e in Forward.objects.all():
+            config = json.dumps(json.loads(e.config))
+            print(f'{e.handler: <40}{config}')
+
+        print('\nAvailable Decoders\n=========================')
+        decoders = DecoderProvider.get_plugins()
+        for a in decoders:
+            name = f'{a.app}.{a.name}'
+            print(f'{name: <40}{a.description}')
+        print('\nConfigured Decoders\n=========================')
+        for e in Decoder.objects.all():
             config = json.dumps(json.loads(e.config))
             print(f'{e.handler: <40}{config}')

@@ -1,4 +1,4 @@
-from broker.endpoint import ForwardProvider
+from broker.providers.forward import ForwardProvider
 import requests
 
 

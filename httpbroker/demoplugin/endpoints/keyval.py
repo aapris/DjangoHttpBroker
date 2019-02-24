@@ -1,7 +1,7 @@
 from urllib import parse
 from django.http.response import HttpResponse
 from django.utils import timezone
-from broker.endpoint import EndpointProvider
+from broker.providers.endpoint import EndpointProvider
 from demoplugin.tasks import process_data
 from demoplugin.utils import get_datalogger, basicauth
 
