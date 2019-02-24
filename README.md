@@ -1,4 +1,4 @@
-# Django Plugin Demo
+# Django HTTP Broker
 
 This Django project aims to demonstrate as simple plugin system as possible.
 The use case is to provide an endpoint to any IoT device or data logger 
@@ -91,8 +91,8 @@ Note: this project requires Python >=3.6
 Try this:
 
 ```
-git clone https://github.com/aapris/DjangoPluginDemo.git
-cd DjangoPluginDemo/
+git clone https://github.com/aapris/DjangoHttpBroker.git
+cd DjangoHttpBroker/
 virtualenv -p /usr/local/bin/python3.6 venv  # Check your python3 path!
 source venv/bin/activate
 pip install -r requirements.txt 
@@ -141,4 +141,4 @@ to process the request data later. You need RabbitMQ or some other broker
 to deliver jobs from Django view to Celery.
 
 Run celery in the same directory where `manage.py` lives like this:  
-`celery --app=httpbroker worker`
+`celery -A httpbroker worker -l info`
