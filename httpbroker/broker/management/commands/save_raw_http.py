@@ -3,7 +3,7 @@ import datetime
 from django.conf import settings
 from broker.management.commands import RabbitCommand
 
-RAW_HTTP_EXCHANGE = 'incoming_raw_http'
+RAW_HTTP_EXCHANGE = settings.RAW_HTTP_EXCHANGE
 
 
 def consumer_callback(channel, method, properties, body):
@@ -29,7 +29,8 @@ class Command(RabbitCommand):
         pass
 
     def handle(self, *args, **options):
+        options['exchange'] = settings.RAW_HTTP_EXCHANGE
+        options['queue'] = 'raw_http_save_queue'
         options['routing_key'] = f'{settings.RABBITMQ["ROUTING_KEY_PREFIX"]}.#'
-        options['queue_name'] = 'raw_http_save_queue'
         options['consumer_callback'] = consumer_callback
         super().handle(*args, **options)

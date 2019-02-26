@@ -3,8 +3,6 @@ import pika.exceptions
 from django.conf import settings
 from django.core.management.base import BaseCommand
 
-RAW_HTTP_EXCHANGE = 'incoming_raw_http'
-
 
 class RabbitCommand(BaseCommand):
     help = 'Base Command for all RabbitMQ Commands. Inherit this in app commands'
@@ -26,12 +24,14 @@ class RabbitCommand(BaseCommand):
             print(f'Connection failed {err}')
             raise
 
-        queue_name = options['queue_name']
+        exchange = options['exchange']
+        queue = options['queue']
+        routing_key = options['routing_key']
         channel = connection.channel()
-        channel.queue_declare(queue_name, durable=True)
-        channel.queue_bind(queue=queue_name, exchange=RAW_HTTP_EXCHANGE, routing_key=options['routing_key'])
-        channel.basic_consume(options['consumer_callback'], queue_name)
-        print(f'Start listening {options["routing_key"]}')
+        channel.queue_declare(queue, durable=True)
+        channel.queue_bind(queue=queue, exchange=exchange, routing_key=routing_key)
+        channel.basic_consume(options['consumer_callback'], queue)
+        print(f'Start listening {routing_key}')
         try:
             channel.start_consuming()
         except KeyboardInterrupt:
