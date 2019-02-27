@@ -1,5 +1,5 @@
 from django.contrib import admin
-from .models import Endpoint, Forward, Datalogger, DataloggerForward
+from .models import Endpoint, Forward, Decoder
 
 
 class EndpointAdmin(admin.ModelAdmin):
@@ -16,14 +16,8 @@ class ForwardAdmin(admin.ModelAdmin):
 admin.site.register(Forward, ForwardAdmin)
 
 
-class ForwardInline(admin.StackedInline):
-    model = DataloggerForward
-    extra = 1
+class DecoderAdmin(admin.ModelAdmin):
+    list_display = ('handler', 'created_at', 'updated_at')
 
 
-class DataloggerAdmin(admin.ModelAdmin):
-    inlines = [ForwardInline]
-    list_display = ('devid', 'name', 'activity_at', 'created_at')
-
-
-admin.site.register(Datalogger, DataloggerAdmin)
+admin.site.register(Decoder, DecoderAdmin)
