@@ -6,7 +6,7 @@ from broker.management.commands import RabbitCommand
 RAW_HTTP_EXCHANGE = settings.RAW_HTTP_EXCHANGE
 
 
-def consumer_callback(channel, method, properties, body):
+def consumer_callback(channel, method, properties, body, options=None):
     # Construct filename
     fname = f'{method.routing_key}.msgpack'
     date = datetime.datetime.utcnow().strftime('%Y-%m-%d')
