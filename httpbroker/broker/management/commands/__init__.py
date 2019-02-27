@@ -1,3 +1,4 @@
+import functools
 import pika
 import pika.exceptions
 from django.conf import settings
@@ -27,10 +28,13 @@ class RabbitCommand(BaseCommand):
         exchange = options['exchange']
         queue = options['queue']
         routing_key = options['routing_key']
+        callback = options.pop('consumer_callback')
         channel = connection.channel()
         channel.queue_declare(queue, durable=True)
         channel.queue_bind(queue=queue, exchange=exchange, routing_key=routing_key)
-        channel.basic_consume(options['consumer_callback'], queue)
+        # Pass options to callback
+        callback = functools.partial(callback, options=options)
+        channel.basic_consume(callback, queue)
         print(f'Start listening {routing_key}')
         try:
             channel.start_consuming()
