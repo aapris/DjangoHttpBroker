@@ -77,8 +77,8 @@ class Datalogger(models.Model):
 
 
 class DataloggerForward(models.Model):
-    datalogger = models.ForeignKey(Datalogger, on_delete=models.CASCADE)
-    forward = models.ForeignKey(Forward, on_delete=models.CASCADE, related_name='related_forwards')
+    datalogger = models.ForeignKey(Datalogger, on_delete=models.CASCADE, related_name='dataloggerforwards')
+    forward = models.ForeignKey(Forward, on_delete=models.CASCADE, related_name='dataloggerforwards')
     config = models.TextField(default='{}', help_text='All required configuration parameters in JSON format')
 
     def __str__(self):
