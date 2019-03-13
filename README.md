@@ -16,7 +16,7 @@ Create a Django app using command
 and a directory called `endpoints` inside it.
 Then add these two lines in `yourpluginapp/endpoints/__init__.py`:
 ```
-from broker.endpoint import import_endpoints
+from broker.providers.endpoint import import_endpoints
 import_endpoints(__file__, __name__)
 ```
 
@@ -27,7 +27,7 @@ of how to implement your own endpoint plugin.
 
 ```
 from django.http.response import HttpResponse
-from broker.endpoint import EndpointProvider
+from broker.providers.endpoint import EndpointProvider
 
 class ExampleEndpoint(EndpointProvider):
     description = "Example endpoint's short description"
