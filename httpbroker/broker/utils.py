@@ -9,11 +9,15 @@ serializable.
 import base64
 import msgpack
 import json
+import datetime
+import pytz
 import pika
 import pika.exceptions
 from django.conf import settings
 from django.contrib.auth import authenticate
 from django.utils import timezone
+
+from broker.providers.decoder import DecoderProvider
 
 META_STARTSWITH = ('SERVER', 'REMOTE')  # REMOTE_ADDR etc.
 META_EXACT = ('QUERY_STRING', 'REQUEST_METHOD', 'SCRIPT_NAME', 'PATH_INFO')
@@ -127,6 +131,64 @@ def get_datalogger(devid, name='', update_activity=False):
     if changed:
         datalogger.save()
     return datalogger, created
+
+
+def create_routing_key(module, devid):
+    pre = settings.RABBITMQ['ROUTING_KEY_PREFIX']
+    key = f'{pre}.{module}.{devid}'
+    return key
+
+
+# Data format and validation tools
+
+def decode_payload(datalogger, payload, port):
+    """
+    Use `datalogger`'s correct decoder plugin to decode `payload`
+    :param datalogger:
+    :param payload:
+    :param port:
+    :return:
+    """
+    plugins = DecoderProvider.get_plugins({})
+    decoded_payload = {}
+    for plugin in plugins:
+        decoder_name = f'{plugin.app}.{plugin.name}'
+        print(datalogger.decoder, decoder_name)
+        if datalogger.decoder == decoder_name:
+            decoded_payload = plugin.decode_payload(payload, port)
+            break
+    return decoded_payload
+
+
+def create_dataline(timestamp: datetime.datetime, data: dict, extra=None):
+    """
+    Create one dataline for "parsed data" from timestamp and data
+    :param datetime timestamp: timezone aware datetime object
+    :param dict data: key-value pairs
+    :param dict extra:
+    :return: dict dataline
+    """
+    #
+    if timestamp.tzinfo is None or timestamp.tzinfo.utcoffset(timestamp) is None:
+        raise ValueError('timestamp must be timezone aware')
+    timestamp = timestamp.astimezone(pytz.UTC)
+    dataline = {
+        'time': timestamp.isoformat(),
+        'data': data
+    }
+    if extra is not None:
+        dataline.update(extra)
+    return dataline
+
+
+def create_parsed_data_message(devid, datalines, extra=None):
+    message = {
+        'devid': devid,
+        'datalines': datalines,
+    }
+    if extra is not None:
+        message.update(extra)
+    return message
 
 
 def validate_parsed_data_message(message, validate_data=False):
