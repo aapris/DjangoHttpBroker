@@ -153,7 +153,6 @@ def decode_payload(datalogger, payload, port):
     decoded_payload = {}
     for plugin in plugins:
         decoder_name = f'{plugin.app}.{plugin.name}'
-        print(datalogger.decoder, decoder_name)
         if datalogger.decoder == decoder_name:
             decoded_payload = plugin.decode_payload(payload, port)
             break
