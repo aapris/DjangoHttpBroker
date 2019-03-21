@@ -1,0 +1,22 @@
+[Unit]
+Description=host.example.org management_command_name
+After=network.target
+
+[Service]
+PIDFile=/site/host.example.org/run/management_command_name.pid
+User=www-data
+Group=www-data
+RuntimeDirectory=gunicorn
+WorkingDirectory=/site/host.example.org/www/DjangoHttpBroker/httpbroker
+ExecStart=/site/virtualenv/host.example.org/bin/python /site/host.example.org/www/DjangoHttpBroker/httpbroker/manage.py management_command_name
+ExecReload=/bin/kill -s HUP $MAINPID
+ExecStop=/bin/kill -s TERM $MAINPID
+PrivateTmp=true
+StandardOutput=file:/site/host.example.org/logs/systemd_stdout.log
+StandardError=file:/site/host.example.org/logs/systemd_stderr.log
+SyslogIdentifier=host.example.org_management_command_name
+Restart=on-failure
+RestartSec=30
+
+[Install]
+WantedBy=multi-user.target
