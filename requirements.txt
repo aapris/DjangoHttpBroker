@@ -1,4 +1,4 @@
-django>=2.2b1,<3
+django>=2.2rc1,<3
 dateutils
 psycopg2
 influxdb
