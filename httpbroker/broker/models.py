@@ -16,6 +16,8 @@ DECODER_HANDLER_CHOICES = [(f'{a.app}.{a.name}', f'{a.app}.{a.name}') for a in d
 
 
 class JsonConfigModel(models.Model):
+    name = models.CharField(max_length=256, blank=True)
+    description = models.CharField(max_length=10000, blank=True)
     config = models.TextField(default='', help_text='All required configuration parameters in JSON format')
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)
@@ -37,20 +39,21 @@ class Endpoint(JsonConfigModel):
 
     def __str__(self):
         return '{}'.format(self.path)
+        return '{} / {} ({})'.format(self.path, self.handler, self.name)
 
 
 class Forward(JsonConfigModel):
     handler = models.CharField(max_length=64, choices=FORWARD_HANDLER_CHOICES)
 
     def __str__(self):
-        return '{}'.format(self.handler)
+        return '{} ({})'.format(self.handler, self.name)
 
 
 class Decoder(JsonConfigModel):
     handler = models.CharField(max_length=64, choices=DECODER_HANDLER_CHOICES)
 
     def __str__(self):
-        return '{}'.format(self.handler)
+        return '{} ({})'.format(self.handler, self.name)
 
 
 class Datalogger(models.Model):

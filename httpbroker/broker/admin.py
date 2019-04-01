@@ -4,21 +4,21 @@ from .models import Datalogger, DataloggerForward
 
 
 class EndpointAdmin(admin.ModelAdmin):
-    list_display = ('path', 'handler', 'created_at', 'updated_at')
+    list_display = ('path', 'handler', 'name', 'created_at', 'updated_at')
 
 
 admin.site.register(Endpoint, EndpointAdmin)
 
 
 class ForwardAdmin(admin.ModelAdmin):
-    list_display = ('handler', 'config', 'created_at', 'updated_at')
+    list_display = ('handler', 'name', 'config', 'created_at', 'updated_at')
 
 
 admin.site.register(Forward, ForwardAdmin)
 
 
 class DecoderAdmin(admin.ModelAdmin):
-    list_display = ('handler', 'created_at', 'updated_at')
+    list_display = ('handler', 'name', 'created_at', 'updated_at')
 
 
 admin.site.register(Decoder, DecoderAdmin)
