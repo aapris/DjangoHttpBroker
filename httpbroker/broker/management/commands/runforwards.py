@@ -7,12 +7,12 @@ from broker.management.commands import RabbitCommand
 from broker.providers.forward import ForwardProvider
 from broker.utils import data_unpack, get_datalogger
 
-logger = logging.getLogger('django')
+logger = logging.getLogger('runforwards')
 
 
 def consumer_callback(channel, method, properties, body, options=None):
     """
-    Extract data from RabbitMQ message's body and save sensor values into InfluxDB
+    Run all Forward plugins, one by one, defined for this Datalogger.
     """
     parsed_data = data_unpack(body)
     devid = parsed_data['devid']
@@ -26,13 +26,18 @@ def consumer_callback(channel, method, properties, body, options=None):
         f_config = json.loads(dlf.forward.config)
         # Read logger's DataForward instance's config
         config = json.loads(dlf.config)
-        # Override fields defined in dataloggerForward's config
+        # Override fields defined in DataloggerForward's config
         f_config.update(config)
         # Find correct plugin and call its forward_data() function
         for plugin in plugins:
             forward_handler = f'{plugin.app}.{plugin.name}'
             if forward_handler == dlf.forward.handler:
-                plugin.forward_data(datalogger, parsed_data, f_config)
+                logger.debug(f'Using {dlf.forward.handler} ({dlf.forward.name}) for {devid}')
+                success = plugin.forward_data(datalogger, parsed_data, f_config)
+                if success:
+                    logger.info(f'Successfully ran Forward: {dlf.forward.handler} ({dlf.forward.name}) for {devid}')
+                else:
+                    logger.warning(f'Forward failed to run: {dlf.forward.handler} ({dlf.forward.name}) for {devid}')
     channel.basic_ack(method.delivery_tag)
 
 
