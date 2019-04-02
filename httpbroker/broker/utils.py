@@ -7,17 +7,21 @@ serializable.
 """
 
 import base64
-import msgpack
-import json
 import datetime
-import pytz
+import json
+import logging
+
+import msgpack
 import pika
 import pika.exceptions
+import pytz
 from django.conf import settings
 from django.contrib.auth import authenticate
 from django.utils import timezone
 
 from broker.providers.decoder import DecoderProvider
+
+logger = logging.getLogger('broker')
 
 META_STARTSWITH = ('SERVER', 'REMOTE')  # REMOTE_ADDR etc.
 META_EXACT = ('QUERY_STRING', 'REQUEST_METHOD', 'SCRIPT_NAME', 'PATH_INFO')
@@ -74,11 +78,12 @@ def send_message(exchange, key, message):
     try:
         connection = pika.BlockingConnection(conn_params)
     except pika.exceptions.ConnectionClosed as err:
-        print(f'Connection failed {err}')
         # Log error, notify admins, fallback to file storage etc. here
+        logger.error(f'Connection failed {err}')
         raise
 
     channel = connection.channel()
+    logger.debug(f'exchange={exchange} routing_key={key}, body={message}')
     channel.basic_publish(exchange=exchange,
                           routing_key=key,
                           body=message,
