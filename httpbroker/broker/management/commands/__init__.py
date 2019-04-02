@@ -34,7 +34,7 @@ class RabbitCommand(BaseCommand):
         channel.queue_bind(queue=queue, exchange=exchange, routing_key=routing_key)
         # Pass options to callback
         callback = functools.partial(callback, options=options)
-        channel.basic_consume(callback, queue)
+        channel.basic_consume(queue, callback)
         print(f'Start listening {routing_key}')
         try:
             channel.start_consuming()
