@@ -1,8 +1,12 @@
 import functools
+import logging
+
 import pika
 import pika.exceptions
 from django.conf import settings
 from django.core.management.base import BaseCommand
+
+logger = logging.getLogger('broker')
 
 
 class RabbitCommand(BaseCommand):
@@ -35,7 +39,9 @@ class RabbitCommand(BaseCommand):
         # Pass options to callback
         callback = functools.partial(callback, options=options)
         channel.basic_consume(queue, callback)
-        print(f'Start listening {routing_key}')
+        log_msg = f'Start listening {exchange} {queue} {routing_key}'
+        print(log_msg)
+        logger.info(log_msg)
         try:
             channel.start_consuming()
         except KeyboardInterrupt:

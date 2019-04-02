@@ -1,7 +1,12 @@
-import os
 import datetime
+import logging
+import os
+
 from django.conf import settings
+
 from broker.management.commands import RabbitCommand
+
+logger = logging.getLogger('broker')
 
 RAW_HTTP_EXCHANGE = settings.RAW_HTTP_EXCHANGE
 
@@ -16,7 +21,7 @@ def consumer_callback(channel, method, properties, body, options=None):
         os.makedirs(path)
     with open(fpath, 'ab') as f:
         f.write(body)
-    print(f'Successfully saved message {method.delivery_tag}')
+    logger.debug(f'Successfully saved message {method.delivery_tag}')
     channel.basic_ack(method.delivery_tag)
 
 
@@ -29,6 +34,7 @@ class Command(RabbitCommand):
         pass
 
     def handle(self, *args, **options):
+        logger.info(f'Start handling {__name__}')
         options['exchange'] = settings.RAW_HTTP_EXCHANGE
         options['queue'] = 'raw_http_save_queue'
         options['routing_key'] = f'{settings.RABBITMQ["ROUTING_KEY_PREFIX"]}.#'
