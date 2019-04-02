@@ -68,9 +68,9 @@ def data_unpack(message):
 def send_message(exchange, key, message):
     if settings.RABBITMQ.get('USER') is not None and settings.RABBITMQ.get('PASSWORD') is not None:
         credentials = pika.PlainCredentials(settings.RABBITMQ['USER'], settings.RABBITMQ['PASSWORD'])
-        conn_params = pika.ConnectionParameters('localhost', 5672, '/', credentials)
+        conn_params = pika.ConnectionParameters(host='localhost', port=5672, virtual_host='/', credentials=credentials)
     else:
-        conn_params = pika.ConnectionParameters('localhost', 5672, '/')
+        conn_params = pika.ConnectionParameters(host='localhost', port=5672, virtual_host='/')
     try:
         connection = pika.BlockingConnection(conn_params)
     except pika.exceptions.ConnectionClosed as err:

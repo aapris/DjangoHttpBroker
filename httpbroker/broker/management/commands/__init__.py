@@ -22,7 +22,7 @@ class RabbitCommand(BaseCommand):
         try:
             connection = pika.BlockingConnection(conn_params)
         except pika.exceptions.ConnectionClosed as err:
-            print(f'Connection failed {err}')
+            print(f'Connection failed: {err}')
             raise
 
         exchange = options['exchange']

@@ -1,8 +1,8 @@
-django>=2.2,<3
+django>=2.2,<2.3
 dateutils
 psycopg2
 influxdb
-pika
+pika>=1.0.0,<1.1
 msgpack
 gunicorn
 celery
