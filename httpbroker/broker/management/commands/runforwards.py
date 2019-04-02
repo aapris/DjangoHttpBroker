@@ -30,7 +30,7 @@ def consumer_callback(channel, method, properties, body, options=None):
         f_config.update(config)
         # Find correct plugin and call its forward_data() function
         for plugin in plugins:
-            forward_handler = f'{plugin.app}.{plugin.name}'
+            forward_handler = f'{plugin.app}.{plugin.name}'  # TODO: to a property in plugin
             if forward_handler == dlf.forward.handler:
                 logger.debug(f'Using {dlf.forward.handler} ({dlf.forward.name}) for {devid}')
                 success = plugin.forward_data(datalogger, parsed_data, f_config)
@@ -45,12 +45,20 @@ class Command(RabbitCommand):
     help = 'Read RabbitMQ queue and save all data into InfluxDB'
 
     def add_arguments(self, parser):
+        parser.add_argument('--prefix', type=str,
+                            help='queue and routing_key prefix, overrides settings.ROUTING_KEY_PREFIX')
         super().add_arguments(parser)
 
     def handle(self, *args, **options):
         logger.info(f'Start handling {__name__}')
+        name = 'runforwards'
+        # FIXME: constructing options should be (probably) in a function in broker.utils
+        if options["prefix"] is None:
+            prefix = settings.RABBITMQ["ROUTING_KEY_PREFIX"]
+        else:
+            prefix = options["prefix"]
         options['exchange'] = settings.PARSED_DATA_EXCHANGE
-        options['queue'] = 'runforwards_queue'
-        options['routing_key'] = f'{settings.RABBITMQ["ROUTING_KEY_PREFIX"]}.#'
+        options['routing_key'] = f'{prefix}.#'  # We want to catch all messages in this handler
+        options['queue'] = f'{prefix}_{name}_queue'
         options['consumer_callback'] = consumer_callback
         super().handle(*args, **options)

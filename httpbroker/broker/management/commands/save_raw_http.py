@@ -29,14 +29,20 @@ class Command(RabbitCommand):
     help = 'Read RabbitMQ queue and save all messages to a file'
 
     def add_arguments(self, parser):
-        # parser.add_argument('keys', nargs='+', type=str)
+        parser.add_argument('--prefix', type=str,
+                            help='queue and routing_key prefix, overrides settings.ROUTING_KEY_PREFIX')
         super().add_arguments(parser)
         pass
 
     def handle(self, *args, **options):
         logger.info(f'Start handling {__name__}')
+        # FIXME: constructing options should be in a function in broker.utils
+        if options["prefix"] is None:
+            prefix = settings.RABBITMQ["ROUTING_KEY_PREFIX"]
+        else:
+            prefix = options["prefix"]
         options['exchange'] = settings.RAW_HTTP_EXCHANGE
-        options['queue'] = 'raw_http_save_queue'
-        options['routing_key'] = f'{settings.RABBITMQ["ROUTING_KEY_PREFIX"]}.#'
+        options['routing_key'] = f'{prefix}.#'
+        options['queue'] = f'{prefix}_raw_http_save_queue'
         options['consumer_callback'] = consumer_callback
         super().handle(*args, **options)
