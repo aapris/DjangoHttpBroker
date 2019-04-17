@@ -29,6 +29,7 @@ class DecoderProvider(object, metaclass=PluginMount):
         """
         self.name = type(self).__name__
         self.app = type(self).__module__.split('.')[0]
+        self.full_name = f'{self.app}.{self.name}'
 
 
 def import_decoders(_file, _name):

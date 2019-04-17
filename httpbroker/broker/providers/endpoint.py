@@ -29,6 +29,7 @@ class EndpointProvider(object, metaclass=PluginMount):
         """
         self.name = type(self).__name__
         self.app = type(self).__module__.split('.')[0]
+        self.full_name = f'{self.app}.{self.name}'
 
     # TODO:
     # def handle_request() abstract method

@@ -29,6 +29,7 @@ class ForwardProvider(object, metaclass=PluginMount):
         """
         self.name = type(self).__name__
         self.app = type(self).__module__.split('.')[0]
+        self.full_name = f'{self.app}.{self.name}'
 
     # TODO:
     # def forward_data() abstract method
@@ -40,7 +41,6 @@ def import_forwards(_file, _name):
     :param _file:  always __file__
     :param _name: always __name__
     """
-    pass
     for (_, name, _) in pkgutil.iter_modules([Path(_file).parent]):
         imported_module = import_module('.' + name, package=_name)
         for i in dir(imported_module):
