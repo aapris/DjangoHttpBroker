@@ -157,8 +157,7 @@ def decode_payload(datalogger, payload, **kwargs):
     plugins = DecoderProvider.get_plugins({})
     decoded_payload = {}
     for plugin in plugins:
-        decoder_name = f'{plugin.app}.{plugin.name}'
-        if datalogger.decoder == decoder_name:
+        if datalogger.decoder == plugin.full_name:
             decoded_payload = plugin.decode_payload(payload, **kwargs)
             break
     return decoded_payload
