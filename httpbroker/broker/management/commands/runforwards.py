@@ -30,8 +30,7 @@ def consumer_callback(channel, method, properties, body, options=None):
         f_config.update(config)
         # Find correct plugin and call its forward_data() function
         for plugin in plugins:
-            forward_handler = f'{plugin.app}.{plugin.name}'  # TODO: to a property in plugin
-            if forward_handler == dlf.forward.handler:
+            if plugin.full_name == dlf.forward.handler:
                 logger.debug(f'Using {dlf.forward.handler} ({dlf.forward.name}) for {devid}')
                 success = plugin.forward_data(datalogger, parsed_data, f_config)
                 if success:

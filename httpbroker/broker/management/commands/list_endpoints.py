@@ -17,8 +17,7 @@ class Command(BaseCommand):
         print('Available Endpoints\n=========================')
         endpoints = EndpointProvider.get_plugins()
         for a in endpoints:
-            name = f'{a.app}.{a.name}'
-            print(f'{name: <40}{a.description}')
+            print(f'{a.full_name: <40}{a.description}')
         print('\nConfigured Endpoints\n=========================')
         for e in Endpoint.objects.all():
             print(f'{e.handler: <40}/{e.path}')
@@ -27,8 +26,7 @@ class Command(BaseCommand):
         forwards = ForwardProvider.get_plugins()
         # forwards.sort()
         for a in forwards:
-            name = f'{a.app}.{a.name}'
-            print(f'{name: <40}{a.description}')
+            print(f'{a.full_name: <40}{a.description}')
         print('\nConfigured Forwards\n=========================')
         for e in Forward.objects.all():
             config = json.dumps(json.loads(e.config))
@@ -37,8 +35,7 @@ class Command(BaseCommand):
         print('\nAvailable Decoders\n=========================')
         decoders = DecoderProvider.get_plugins()
         for a in decoders:
-            name = f'{a.app}.{a.name}'
-            print(f'{name: <40}{a.description}')
+            print(f'{a.full_name: <40}{a.description}')
         print('\nConfigured Decoders\n=========================')
         for e in Decoder.objects.all():
             config = json.dumps(json.loads(e.config))

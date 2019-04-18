@@ -14,8 +14,7 @@ def catchall(request, path):
     plugins = EndpointProvider.get_plugins(request)
     response = HttpResponse('Handler not found', content_type='text/plain', status=500)
     for plugin in plugins:
-        handler_name = f'{plugin.app}.{plugin.name}'
-        if endpoint.handler == handler_name:
+        if endpoint.handler == plugin.full_name:
             response = plugin.handle_request(request)
             break
     return response
