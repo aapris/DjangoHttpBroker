@@ -32,6 +32,7 @@ class ForwardInline(admin.StackedInline):
 class DataloggerAdmin(admin.ModelAdmin):
     inlines = [ForwardInline]
     list_display = ('devid', 'name', 'activity_at', 'created_at')
+    search_fields = ('devid', 'name', 'description', 'decoder')
 
 
 admin.site.register(Datalogger, DataloggerAdmin)
