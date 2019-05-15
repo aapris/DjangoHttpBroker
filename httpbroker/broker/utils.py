@@ -146,7 +146,7 @@ def create_routing_key(module, devid):
 
 # Data format and validation tools
 
-def decode_payload(datalogger, payload, **kwargs):
+def decode_payload(datalogger, payload, port, **kwargs):
     """
     Use `datalogger`'s correct decoder plugin to decode `payload`
     :param datalogger:
@@ -158,7 +158,7 @@ def decode_payload(datalogger, payload, **kwargs):
     decoded_payload = {}
     for plugin in plugins:
         if datalogger.decoder == plugin.full_name:
-            decoded_payload = plugin.decode_payload(payload, **kwargs)
+            decoded_payload = plugin.decode_payload(payload, port, **kwargs)
             break
     return decoded_payload
 
