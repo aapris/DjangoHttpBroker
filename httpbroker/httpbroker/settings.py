@@ -130,8 +130,11 @@ RABBITMQ = {
     'USER': None,
     'PASSWORD': None,
 }
+
+# Exchange names. Note: these are in declare_exchanges.py too!
 RAW_HTTP_EXCHANGE = 'incoming_raw_http'
 PARSED_DATA_EXCHANGE = 'outgoing_parsed_data'
+PARSED_DATA_HEADERS_EXCHANGE = 'outgoing_parsed_data_headers'
 
 # local_settings.py can be used to override environment-specific settings
 # like database and email that differ between development and production.
