@@ -3,3 +3,7 @@ db.sqlite3
 __pycache__
 venv/
 local_settings.py
+*/var/*
+logs/
+.coverage
+*.swp
