@@ -1,6 +1,6 @@
 from django.contrib import admin
 from .models import Endpoint, Forward, Decoder
-from .models import Datalogger, DataloggerForward
+from .models import Application, Datalogger, DataloggerForward
 
 
 class EndpointAdmin(admin.ModelAdmin):
@@ -27,6 +27,14 @@ admin.site.register(Decoder, DecoderAdmin)
 class ForwardInline(admin.StackedInline):
     model = DataloggerForward
     extra = 1
+
+
+class ApplicationAdmin(admin.ModelAdmin):
+    list_display = ('name', 'created_at')
+    search_fields = ('name', 'config')
+
+
+admin.site.register(Application, ApplicationAdmin)
 
 
 class DataloggerAdmin(admin.ModelAdmin):
