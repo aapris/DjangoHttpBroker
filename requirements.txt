@@ -1,6 +1,7 @@
+pytz
 django>=2.2,<2.3
 dateutils
-psycopg2
+psycopg2-binary
 influxdb
 pika>=1.0.0,<1.1
 msgpack
