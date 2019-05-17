@@ -141,6 +141,10 @@ def save_nonexisting_datalogger_message(devid, msg):
     save_message_to_file('noexist', devid, msg)
 
 
+def save_parse_fail_datalogger_message(devid, msg):
+    save_message_to_file('parse_fail', devid, msg)
+
+
 def basicauth(request):
     """Check for valid basic auth header."""
     uname, passwd, user = None, None, None
