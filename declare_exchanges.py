@@ -1,12 +1,16 @@
 import pika
 
+print("Do not use this anymore, use broker.utils.declare_exchanges() instead")
+exit()
+
 # Exchange names. Note: these are in settings.py too!
 RAW_HTTP_EXCHANGE = 'incoming_raw_http'
 PARSED_DATA_EXCHANGE = 'outgoing_parsed_data'
 PARSED_DATA_HEADERS_EXCHANGE = 'outgoing_parsed_data_headers'
+VHOST = '/'
 
 connection = pika.BlockingConnection(
-    pika.ConnectionParameters('localhost', 5672, '/',
+    pika.ConnectionParameters('localhost', 5672, VHOST,
                               # pika.credentials.PlainCredentials('user', 'password')
                               ))
 

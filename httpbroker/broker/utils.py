@@ -169,14 +169,60 @@ def create_routing_key(module, devid):
     return key
 
 
+def create_vhost():
+    """
+    Create virtual host string for RabbitMQ connect functions
+    :return: str vhost
+    """
+    vhost = settings.RABBITMQ['VHOST']
+    return vhost
+
+
+def declare_exchanges():
+    """
+    Create all mandatory RabbitMQ exchanges for DjangoHttpBroker system.
+    """
+    vhost = create_vhost()
+    connection = pika.BlockingConnection(
+        pika.ConnectionParameters('localhost', 5672, vhost,
+                                  # pika.credentials.PlainCredentials('user', 'password')
+                                  ))
+
+    channel = connection.channel()
+
+    channel.exchange_declare(
+        exchange=settings.RAW_HTTP_EXCHANGE,
+        exchange_type='topic',
+        durable=True,
+        auto_delete=False,
+    )
+
+    channel.exchange_declare(
+        exchange=settings.PARSED_DATA_EXCHANGE,
+        exchange_type='topic',
+        durable=True,
+        auto_delete=False,
+    )
+
+    channel.exchange_declare(
+        exchange=settings.PARSED_DATA_HEADERS_EXCHANGE,
+        exchange_type='headers',
+        durable=True,
+        auto_delete=False,
+    )
+
+    channel.close()
+    connection.close()
+
+
 # Data format and validation tools
 
 def decode_payload(datalogger, payload, port, **kwargs):
     """
     Use `datalogger`'s correct decoder plugin to decode `payload`
-    :param datalogger:
-    :param payload:
-    :param port:
+    :param Datalogger datalogger:
+    :param str payload:
+    :param str port:
     :return:
     """
     plugins = DecoderProvider.get_plugins({})
