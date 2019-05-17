@@ -7,7 +7,6 @@ def import_plugins():
     Import all plugin modules and initialise EndpointProvider instances found.
     """
     apps = []
-    # print('Loading endpoints...')
 
     for appname in settings.INSTALLED_APPS:
         if appname.startswith('django.') is False:
