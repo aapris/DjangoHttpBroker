@@ -42,11 +42,13 @@ def print_httpie(req, options):
     body = req['request.body']
     method = req['request.META']['REQUEST_METHOD']
     query_string = req['request.META']['QUERY_STRING']
+    if query_string != '':
+        query_string = '?' + query_string
     path = req['request.META']['PATH_INFO']
-    scheme = 'http'
-    host = '127.0.0.1'
-    port = '8000'
-    httpie = f'echo -n \'{body}\' | http -v {method} "{scheme}://{host}:{port}{path}?{query_string}" {headers_str}'
+    baseurl = options['baseurl']
+    # scheme, host, port = 'http', '127.0.0.1', '8000'
+    # httpie = f'echo -n \'{body}\' | http -v {method} "{scheme}://{host}:{port}{path}?{query_string}" {headers_str}'
+    httpie = f'echo -n \'{body}\' | http -v {method} "{baseurl}{path}{query_string}" {headers_str}'
     print(httpie)
 
 
@@ -56,6 +58,7 @@ class Command(BaseCommand):
     def add_arguments(self, parser):
         parser.add_argument('--devid', type=str)
         parser.add_argument('--date', type=str)
+        parser.add_argument('--baseurl', default='http://127.0.0.1:8000', type=str)
         parser.add_argument('-i', '--index', type=int, default=-1)
         parser.add_argument('-p', '--pretty', action='store_true')
         parser.add_argument('--httpie', action='store_true')
