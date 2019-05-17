@@ -186,6 +186,17 @@ def get_datalogger(devid, name='', update_activity=False):
     return datalogger, created
 
 
+def get_datalogger_decoder(datalogger):
+    for decoder in [
+        datalogger.decoder,
+        datalogger.application.decoder,
+        # serialized_request.get('decoder', '')
+    ]:
+        if decoder != '':
+            return decoder
+    return None
+
+
 def create_routing_key(module, devid):
     pre = settings.RABBITMQ['ROUTING_KEY_PREFIX']
     key = f'{pre}.{module}.{devid}'
