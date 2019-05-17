@@ -1,3 +1,12 @@
+import os
+
+BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
+
+# SECURITY WARNING: don't run with debug turned on in production!
+DEBUG = False
+
+ALLOWED_HOSTS = ['127.0.0.1', ]
+
 DATABASES = {
     'default': {
         'ENGINE': 'django.db.backends.postgresql_psycopg2',
@@ -21,3 +30,14 @@ INSTALLED_APPS = [
     'broker',  # Contains URL routing, model for
     'demoplugin',  # Just some default endpoints for demonstration purposes
 ]
+
+# RabbitMQ
+RABBITMQ_APP = 'myapp'
+RABBITMQ = {
+    'ROUTING_KEY_PREFIX': RABBITMQ_APP,  # Override in local_settings
+    'HOST': 'localhost',
+    'VHOST': f'/{RABBITMQ_APP}',  # If you have just one instance running on the server, use '/'
+    'PORT': 5672,
+    'USER': None,
+    'PASSWORD': None,
+}
