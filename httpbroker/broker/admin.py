@@ -30,8 +30,8 @@ class ForwardInline(admin.StackedInline):
 
 
 class ApplicationAdmin(admin.ModelAdmin):
-    list_display = ('name', 'created_at')
-    search_fields = ('name', 'config')
+    list_display = ('name', 'decoder', 'created_at')
+    search_fields = ('name', 'decoder', 'config')
 
 
 admin.site.register(Application, ApplicationAdmin)
