@@ -10,6 +10,7 @@ import base64
 import datetime
 import json
 import logging
+import os
 
 import msgpack
 import pika
@@ -30,6 +31,10 @@ META_EXACT = ('QUERY_STRING', 'REQUEST_METHOD', 'SCRIPT_NAME', 'PATH_INFO')
 def serialize_django_request(request):
     """
     Extract all useful values from HttpRequest and return them as a dict.
+    Add empty subdicts for other metadata objects:
+    - config (for decoding, storing and forwarding messages and data)
+    - routing_headers (for RabbitMQ)
+
     :param HttpRequest request:
     :return: HttpRequest headers, META and body in a dict.
     """
@@ -46,6 +51,8 @@ def serialize_django_request(request):
         'request.body': request.body,
         'request.GET': dict(request.GET),
         'request.POST': dict(request.POST),
+        'config': {},
+        'routing_headers': {},
     }
 
 
@@ -69,26 +76,44 @@ def data_unpack(message):
     return msgpack.unpackb(message, use_list=True, raw=False, strict_map_key=True)
 
 
-def send_message(exchange, key, message):
+def send_message(exchange, key, message, headers=None):
+    """
+    Send message to an RabbitMQ exchange in one well defined way.
+    Use this function always when publishing messages to an exchange.
+    If headers is set, key will be ignored.
+
+    :param str exchange: Exchange name
+    :param str key: the routing key (topic)
+    :param bytes message: bytes encoded message
+    :param dict headers: a dict containing headers in key:val pairs
+    :return:
+    """
+    basic_properties = {
+        'content_type': 'application/octet-stream',
+        'delivery_mode': 2
+    }
+    if headers is not None:
+        basic_properties['headers'] = headers
+        key = ''
+    vhost = create_vhost()
     if settings.RABBITMQ.get('USER') is not None and settings.RABBITMQ.get('PASSWORD') is not None:
         credentials = pika.PlainCredentials(settings.RABBITMQ['USER'], settings.RABBITMQ['PASSWORD'])
-        conn_params = pika.ConnectionParameters(host='localhost', port=5672, virtual_host='/', credentials=credentials)
+        conn_params = pika.ConnectionParameters(host='localhost', port=5672, virtual_host=vhost,
+                                                credentials=credentials)
     else:
-        conn_params = pika.ConnectionParameters(host='localhost', port=5672, virtual_host='/')
+        conn_params = pika.ConnectionParameters(host='localhost', port=5672, virtual_host=vhost)
     try:
         connection = pika.BlockingConnection(conn_params)
     except pika.exceptions.ConnectionClosed as err:
         # Log error, notify admins, fallback to file storage etc. here
         logger.error(f'Connection failed {err}')
         raise
-
     channel = connection.channel()
-    logger.debug(f'exchange={exchange} routing_key={key}, body={message}')
+    logger.debug(f'exchange={exchange} routing_key={key}, body={message} properties={basic_properties}')
     channel.basic_publish(exchange=exchange,
                           routing_key=key,
                           body=message,
-                          properties=pika.BasicProperties(content_type='application/octet-stream',
-                                                          delivery_mode=2))
+                          properties=pika.BasicProperties(**basic_properties))
     channel.close()
     connection.close()
 
