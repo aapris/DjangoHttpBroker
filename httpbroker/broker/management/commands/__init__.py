@@ -1,11 +1,9 @@
 import functools
 import logging
 
-import pika
-import pika.exceptions
-from django.conf import settings
 from django.core.management.base import BaseCommand
-from broker.utils import create_vhost
+
+from broker.utils import get_rabbitmq_connection
 
 logger = logging.getLogger('broker')
 
@@ -21,18 +19,7 @@ class RabbitCommand(BaseCommand):
     def handle(self, *args, **options):
         if options['log'] is not None:
             logging.getLogger().setLevel(options['log'])
-        vhost = create_vhost()
-        if settings.RABBITMQ.get('USER') is not None and settings.RABBITMQ.get('PASSWORD') is not None:
-            credentials = pika.PlainCredentials(settings.RABBITMQ['USER'], settings.RABBITMQ['PASSWORD'])
-            conn_params = pika.ConnectionParameters('localhost', 5672, vhost, credentials)
-        else:
-            conn_params = pika.ConnectionParameters('localhost', 5672, vhost)
-        try:
-            connection = pika.BlockingConnection(conn_params)
-        except pika.exceptions.ConnectionClosed as err:
-            logging.critical(err)
-            print(f'Connection failed: {err}')
-            raise
+        connection = get_rabbitmq_connection()
 
         # These must always be present
         exchange = options['exchange']
