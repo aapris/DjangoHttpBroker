@@ -276,8 +276,10 @@ def decode_payload(datalogger, payload, port, **kwargs):
     """
     plugins = DecoderProvider.get_plugins({})
     decoded_payload = {}
+    # TODO: use get_decoder here
+    decoder = get_datalogger_decoder(datalogger)
     for plugin in plugins:
-        if datalogger.decoder == plugin.full_name:
+        if decoder == plugin.full_name:
             decoded_payload = plugin.decode_payload(payload, port, **kwargs)
             break
     return decoded_payload
