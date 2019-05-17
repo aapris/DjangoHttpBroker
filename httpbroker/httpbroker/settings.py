@@ -122,10 +122,11 @@ CELERY_ACCEPT_CONTENT = ['msgpack']
 CELERY_TASK_SERIALIZER = 'msgpack'  # Packs bytes (json won't)
 
 # RabbitMQ
+RABBITMQ_APP = 'myapp'
 RABBITMQ = {
-    'ROUTING_KEY_PREFIX': 'httpbroker',  # Override in local_settings
+    'ROUTING_KEY_PREFIX': 'myapp',  # Override in local_settings
     'HOST': 'localhost',
-    'VHOST': '/',
+    'VHOST': '/',  # If you have just one instance running on the server, use '/'
     'PORT': 5672,
     'USER': None,
     'PASSWORD': None,
