@@ -118,6 +118,29 @@ def send_message(exchange, key, message, headers=None):
     connection.close()
 
 
+def save_message_to_file(subdir, devid, msg):
+    """
+    Generic function to archive serialized data message to a file
+
+    :param str subdir:
+    :param str devid:
+    :param msg:
+    """
+    # Construct filename
+    fname = f'{devid}.msgpack'
+    date = datetime.datetime.utcnow().strftime('%Y-%m-%d')
+    path = os.path.join(settings.VAR_DIR, subdir, date)
+    fpath = os.path.join(path, fname)
+    if not os.path.exists(path):
+        os.makedirs(path)
+    with open(fpath, 'ab') as f:
+        f.write(msg)
+
+
+def save_nonexisting_datalogger_message(devid, msg):
+    save_message_to_file('noexist', devid, msg)
+
+
 def basicauth(request):
     """Check for valid basic auth header."""
     uname, passwd, user = None, None, None
