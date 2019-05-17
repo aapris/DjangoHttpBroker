@@ -183,10 +183,17 @@ def declare_exchanges():
     Create all mandatory RabbitMQ exchanges for DjangoHttpBroker system.
     """
     vhost = create_vhost()
-    connection = pika.BlockingConnection(
-        pika.ConnectionParameters('localhost', 5672, vhost,
-                                  # pika.credentials.PlainCredentials('user', 'password')
-                                  ))
+    if settings.RABBITMQ.get('USER') is not None and settings.RABBITMQ.get('PASSWORD') is not None:
+        credentials = pika.PlainCredentials(settings.RABBITMQ['USER'], settings.RABBITMQ['PASSWORD'])
+        conn_params = pika.ConnectionParameters('localhost', 5672, vhost, credentials)
+    else:
+        conn_params = pika.ConnectionParameters('localhost', 5672, vhost)
+    try:
+        connection = pika.BlockingConnection(conn_params)
+    except pika.exceptions.ConnectionClosed as err:
+        logging.critical(err)
+        print(f'Connection failed: {err}')
+        raise
 
     channel = connection.channel()
 
