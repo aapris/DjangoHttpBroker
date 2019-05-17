@@ -5,6 +5,7 @@ import pika
 import pika.exceptions
 from django.conf import settings
 from django.core.management.base import BaseCommand
+from broker.utils import create_vhost
 
 logger = logging.getLogger('broker')
 
@@ -14,33 +15,51 @@ class RabbitCommand(BaseCommand):
 
     def add_arguments(self, parser):
         # TODO: add arguments for file path, routing_key etc.
-        # parser.add_argument('keys', nargs='+', type=str)
-        pass
+        parser.add_argument("-l", "--log", dest="log", choices=['DEBUG', 'INFO', 'WARNING', 'ERROR', 'CRITICAL'],
+                            help="Set the logging level")
 
     def handle(self, *args, **options):
+        if options['log'] is not None:
+            logging.getLogger().setLevel(options['log'])
+        vhost = create_vhost()
         if settings.RABBITMQ.get('USER') is not None and settings.RABBITMQ.get('PASSWORD') is not None:
             credentials = pika.PlainCredentials(settings.RABBITMQ['USER'], settings.RABBITMQ['PASSWORD'])
-            conn_params = pika.ConnectionParameters('localhost', 5672, '/', credentials)
+            conn_params = pika.ConnectionParameters('localhost', 5672, vhost, credentials)
         else:
-            conn_params = pika.ConnectionParameters('localhost', 5672, '/')
+            conn_params = pika.ConnectionParameters('localhost', 5672, vhost)
         try:
             connection = pika.BlockingConnection(conn_params)
         except pika.exceptions.ConnectionClosed as err:
+            logging.critical(err)
             print(f'Connection failed: {err}')
             raise
 
+        # These must always be present
         exchange = options['exchange']
         queue = options['queue']
-        routing_key = options['routing_key']
         callback = options.pop('consumer_callback')
+        # Routing key and arguments are alternate
+        routing_key = options.get('routing_key', '')
+        arguments = options.get('arguments')
+        # Build bind_args to pass to queue_bind()
+        bind_args = {
+            'queue': queue,
+            'exchange': exchange,
+        }
+        # If arguments (=headers) are present, we are listening to Headers Exchange and routing_key is empty
+        if arguments is not None:
+            bind_args['arguments'] = arguments
+            bind_args['routing_key'] = ''
+        else:
+            bind_args['routing_key'] = routing_key
+        # Create channel, declare queue and bind it to an exchange
         channel = connection.channel()
         channel.queue_declare(queue, durable=True)
-        channel.queue_bind(queue=queue, exchange=exchange, routing_key=routing_key)
+        channel.queue_bind(**bind_args)
         # Pass options to callback
         callback = functools.partial(callback, options=options)
         channel.basic_consume(queue, callback)
-        log_msg = f'Start listening {exchange} {queue} {routing_key}'
-        print(log_msg)
+        log_msg = f'Start listening {bind_args}'
         logger.info(log_msg)
         try:
             channel.start_consuming()
