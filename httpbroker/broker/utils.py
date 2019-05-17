@@ -191,14 +191,13 @@ def get_datalogger(devid, name='', update_activity=False):
 
 
 def get_datalogger_decoder(datalogger):
-    for decoder in [
-        datalogger.decoder,
-        datalogger.application.decoder,
-        # serialized_request.get('decoder', '')
-    ]:
-        if decoder != '':
-            return decoder
-    return None
+    decoder = None
+    if datalogger.decoder != '':
+        decoder = datalogger.decoder
+    elif datalogger.application and datalogger.application.decoder != '':
+        decoder = datalogger.application.decoder
+    # serialized_request.get('decoder', '')
+    return decoder
 
 
 def create_routing_key(module, devid):
