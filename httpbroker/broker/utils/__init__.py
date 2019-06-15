@@ -137,12 +137,23 @@ def save_message_to_file(subdir, devid, msg):
         f.write(msg)
 
 
+def save_httprequest_to_file(routing_key, msg):
+    assert len(routing_key.split('.')) == 3  # Should be 'prefix.app.devid
+    save_message_to_file('httprequests', routing_key, msg)  # FIXME: 'httprequests' is everywhere hardcoded
+
+
 def save_nonexisting_datalogger_message(devid, msg):
     save_message_to_file('noexist', devid, msg)
 
 
 def save_parse_fail_datalogger_message(devid, msg):
     save_message_to_file('parse_fail', devid, msg)
+
+
+def epoch2datetime(epoch):
+    timestamp = datetime.datetime.utcfromtimestamp(epoch)
+    timestamp = pytz.UTC.localize(timestamp)
+    return timestamp
 
 
 def basicauth(request):
