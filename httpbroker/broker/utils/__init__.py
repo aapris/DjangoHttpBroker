@@ -179,17 +179,25 @@ def decode_json_body(body):
         return False, err
 
 
-def get_datalogger(devid, name='', update_activity=False):
+def get_datalogger(devid, name='', update_activity=False, create=True):
     # FIXME: Shit, this import can't be in the beginning of the file or we'll get:
     # "django.core.exceptions.AppRegistryNotReady: Apps aren't loaded yet."
     # It can be imported if you run django.setup() before import, but it messes up loading
     # import django
     # django.setup()
     # from broker.models import Datalogger
-    from .models import Datalogger
-
-    datalogger, created = Datalogger.objects.get_or_create(devid=devid)
+    from broker.models import Datalogger
+    datalogger = None
+    created = False
     changed = False
+    try:
+        datalogger = Datalogger.objects.get(devid=devid)
+        created = False
+    except Datalogger.DoesNotExist:
+        if create:
+            datalogger = Datalogger(devid=devid)
+            created = True
+    # datalogger, created = Datalogger.objects.get_or_create(devid=devid)
     if created:
         datalogger.name = name
         changed = True
@@ -199,6 +207,13 @@ def get_datalogger(devid, name='', update_activity=False):
     if changed:
         datalogger.save()
     return datalogger, created
+
+
+def datalogger_get_config(datalogger, parsed_data):
+    config = {}
+    if datalogger.application:
+        config.update(json.loads(datalogger.application.config))
+    return config
 
 
 def get_datalogger_decoder(datalogger):
