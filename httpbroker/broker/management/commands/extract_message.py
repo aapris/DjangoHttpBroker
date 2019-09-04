@@ -10,7 +10,8 @@ from django.core.management.base import BaseCommand
 def list_dates(self, base_dir, path):
     dirs = os.listdir(base_dir)
     dirs.sort()
-    self.stdout.write(f'Directory {path} does not exist.\nUse e.g. `--date {dirs[-1]}` parameter or some other listed below:\n')
+    self.stdout.write(
+        f'Directory {path} does not exist.\nUse e.g. `--date {dirs[-1]}` parameter or some other listed below:\n')
     self.stdout.write('\n'.join(dirs))
 
 
@@ -18,7 +19,8 @@ def list_devids(self, path):
     files = glob.glob(f'{path}/*.msgpack')
     devids = [x.split('.')[-2] for x in files]
     devids.sort()
-    self.stdout.write(f'Devid does not exist.\nUse e.g. `--devid {devids[-1]}` parameter or some other listed below:\n')
+    self.stdout.write(
+        f'Devid does not exist.\nUse e.g. `--devid {devids[-1]}` parameter or some other listed below:\n')
     self.stdout.write('\n'.join(devids))
 
 
