@@ -26,7 +26,9 @@ def consumer_callback(channel, method, properties, body, options=None):
     datalogger, created = get_datalogger(devid=devid, update_activity=False)
     # FIXME: think config overloading carefully
     config = datalogger_get_config(datalogger, parsed_data)
-    # FIXME: 'influxdb_database' may be defined in parsed_data['config'] already!?
+    # 'influxdb_database' may be re-defined in properties.headers already
+    # so we override config's values with RabbitMQ's headers
+    config.update(properties.headers)
     dbname = config.get('influxdb_database')
     measurement_name = config.get('influxdb_measurement')
     if dbname is not None and measurement_name is not None:
