@@ -9,6 +9,36 @@ In many cases it is not possible to configure a node to use some predefined
 endpoint and the data formats vary a lot, and creating new endpoints should
 be as fast and easy as possible. 
 
+# Main parts
+
+A Django HTTP Broker plugin application consists of several different functions: 
+endpoints, decoders, forwards and (data) models.
+
+## Endpoints
+
+An Endpoint is an object, which processes Django HttpRequest and returns
+Django HttpResponse. Inside `handle_request()` function Endpoint may 
+(in normal workflow) identify sending party, figure out its unique id 
+and pass forward the serialised HTTP request data (headers, body) to
+a RabbitMQ exchange, which puts the request data in one or more 
+processing queues.
+
+## Decoders
+
+A Decoder is an object, which knows how to get real values from 
+decoded payload. A payload can be **anything** found from HTTP request
+data. For example LoRaWAN operators may POST a huge JSON object, where 
+the payload is for example in hexadecimal or base64 encoded format.
+
+## Forwards
+
+TODO
+
+# Routing
+
+
+
+
 # How to use
 
 Create a Django app using command  
