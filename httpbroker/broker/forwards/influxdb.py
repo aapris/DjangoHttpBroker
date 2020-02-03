@@ -14,7 +14,7 @@ class InfluxDBForward(ForwardProvider):
         """
         Insert parsed data into InfluxDB database.
         influxdb_measurement and influxdb_database MUST be defined in Forward's or DataloggerForward's config.
-        
+
         :param Datalogger datalogger:
         :param dict data:
         :param dict config:
@@ -31,6 +31,6 @@ class InfluxDBForward(ForwardProvider):
         iclient.create_database(dbname)
         try:
             iclient.write_points(measurements)
-        except InfluxDBClientError as err:
+        except InfluxDBClientError:
             return False
         return True

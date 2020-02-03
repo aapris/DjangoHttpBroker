@@ -7,19 +7,21 @@ from django.conf import settings
 from django.core.management.base import BaseCommand
 
 
-def list_dates(base_dir, path):
+def list_dates(self, base_dir, path):
     dirs = os.listdir(base_dir)
     dirs.sort()
-    print(f'Directory {path} does not exist.\nUse e.g. `--date {dirs[-1]}` parameter or some other listed below:\n')
-    print('\n'.join(dirs))
+    self.stdout.write(
+        f'Directory {path} does not exist.\nUse e.g. `--date {dirs[-1]}` parameter or some other listed below:\n')
+    self.stdout.write('\n'.join(dirs))
 
 
-def list_devids(path):
+def list_devids(self, path):
     files = glob.glob(f'{path}/*.msgpack')
     devids = [x.split('.')[-2] for x in files]
     devids.sort()
-    print(f'Devid does not exist.\nUse e.g. `--devid {devids[-1]}` parameter or some other listed below:\n')
-    print('\n'.join(devids))
+    self.stdout.write(
+        f'Devid does not exist.\nUse e.g. `--devid {devids[-1]}` parameter or some other listed below:\n')
+    self.stdout.write('\n'.join(devids))
 
 
 def fix_body_encoding(req):
@@ -27,15 +29,15 @@ def fix_body_encoding(req):
         req['request.body'] = req['request.body'].decode('utf8')
 
 
-def print_request(req, options):
+def print_request(self, req, options):
     fix_body_encoding(req)
     if options['pretty']:
-        print(json.dumps(req, indent=2))
+        self.stdout.write(json.dumps(req, indent=2))
     else:
-        print(json.dumps(req))
+        self.stdout.write(json.dumps(req))
 
 
-def print_httpie(req, options):
+def print_httpie(self, req, options):
     fix_body_encoding(req)
     headers = req['request.headers']
     headers_str = ' '.join({f'{k}:"{v}"' for (k, v) in headers.items()})
@@ -49,7 +51,7 @@ def print_httpie(req, options):
     # scheme, host, port = 'http', '127.0.0.1', '8000'
     # httpie = f'echo -n \'{body}\' | http -v {method} "{scheme}://{host}:{port}{path}?{query_string}" {headers_str}'
     httpie = f'echo -n \'{body}\' | http -v {method} "{baseurl}{path}{query_string}" {headers_str}'
-    print(httpie)
+    self.stdout.write(httpie)
 
 
 class Command(BaseCommand):
@@ -72,14 +74,14 @@ class Command(BaseCommand):
             date = options['date']
         path = os.path.join(base_dir, date)  # FIXME: this is in save_raw_http too
         if os.path.isdir(path) is False:
-            list_dates(base_dir, path)
+            list_dates(self, base_dir, path)
             exit()
         if devid is None:
-            list_devids(path)
+            list_devids(self, path)
             exit()
         fnames = glob.glob(f'{path}/*{devid}.msgpack')
         if len(fnames) == 0:
-            print('error')
+            self.stdout.write('error')
             exit()
         with open(fnames[0], 'rb') as f:
             unpacker = msgpack.Unpacker(raw=False)
@@ -89,6 +91,6 @@ class Command(BaseCommand):
                 requests.append(msg)
             req = requests[options['index']]
             if options['httpie']:
-                print_httpie(req, options)
+                print_httpie(self, req, options)
             else:
-                print_request(req, options)
+                print_request(self, req, options)

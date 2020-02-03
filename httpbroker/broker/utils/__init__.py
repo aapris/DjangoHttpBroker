@@ -1,6 +1,6 @@
 """
 Sometimes you need to pass forward HttpRequest, which is not directly serializable.
-serialize_django_request() takes Django HttpRequest as an argument, extracts 
+serialize_django_request() takes Django HttpRequest as an argument, extracts
 HttpRequest.headers (available since Django 2.2), HttpRequest.body and most interesting
 values out from HttpRequest.META and returns them in a dict which is json, msgpack etc.
 serializable.
