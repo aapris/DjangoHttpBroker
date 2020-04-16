@@ -32,7 +32,8 @@ def consumer_callback(channel, method, properties, body, options=None):
     dbname = config.get('influxdb_database')
     measurement_name = config.get('influxdb_measurement')
     if dbname is not None and measurement_name is not None:
-        measurements = create_influxdb_objects(parsed_data, measurement_name)
+        extratags = parsed_data.get('extratags')
+        measurements = create_influxdb_objects(parsed_data, measurement_name, extratags=extratags)
         logger.debug(json.dumps(measurements))
         iclient = get_influxdb_client(database=dbname)
         iclient.create_database(dbname)

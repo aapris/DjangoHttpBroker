@@ -47,8 +47,10 @@ def create_influxdb_objects(data, measurement_name, extratags=None):
             "time": d['time'],
             "fields": d['data']
         }
-        if extratags is not None:
+        if extratags is not None:  # can be an argument in function call
             measurement_obj['tags'].update(extratags)
+        if 'extratags' in d:  # can be in every dataline
+            measurement_obj['tags'].update(d['extratags'])
         measurements.append(measurement_obj)
     return measurements
 
