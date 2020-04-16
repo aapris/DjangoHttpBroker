@@ -13,3 +13,4 @@ Pillow
 python-magic
 exifread
 iptcinfo3
+sentry-sdk==0.14.1
