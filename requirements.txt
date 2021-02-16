@@ -14,3 +14,4 @@ python-magic
 exifread
 iptcinfo3
 sentry-sdk==0.14.1
+git+https://github.com/ForumViriumHelsinki/FVHIoT-python.git#egg=fvhiot
