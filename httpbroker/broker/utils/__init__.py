@@ -196,6 +196,7 @@ def get_datalogger(devid, name='', update_activity=False, create=True):
     except Datalogger.DoesNotExist:
         if create:
             datalogger = Datalogger(devid=devid)
+            datalogger.save()
             created = True
     # datalogger, created = Datalogger.objects.get_or_create(devid=devid)
     if created:
