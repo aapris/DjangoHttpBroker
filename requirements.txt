@@ -1,5 +1,5 @@
 pytz
-django>=3.0,<3.1
+django>=3.1,<4.0
 dateutils
 psycopg2-binary
 influxdb
